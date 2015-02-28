@@ -26,12 +26,12 @@ const uint64_t out_pipe = 0xF0F0F0F0D2LL;
 const byte request[2] = {0x00, 0xFA};
 byte packet[8];
 
-bool timeout;
+bool timeout, rx, tx, fail;
 
 void setup(void) {
   Serial.begin(115200);
   
-  Serial.print("Setup -> "); delay(10);
+  Serial.print("Setup -> ");
   
   // Turn down unneeded peripherals
   power_adc_disable();
@@ -64,7 +64,7 @@ void setup(void) {
   radio.openWritingPipe(RF24_PIPE);
   
   // Power down nrf24
-  radio.powerDown();
+  //radio.powerDown();
   
   // Attach interrupt
   attachInterrupt(1, checkRadio, FALLING);
@@ -72,73 +72,104 @@ void setup(void) {
   // Init motor pins
   pinMode(MOTOR_1, OUTPUT);
   pinMode(MOTOR_2, OUTPUT);
+
+  Serial.println("Ready.");
 }
 
-void loop(void) {
-  goToSleep(false); Serial.println();
-  
-  // Here is passed around a second.
-  Serial.print("Wake -> ");
-  
-  radio.powerUp();
-  
-  // Send status request to base. This command power up the radio
-  Serial.print("Request ");
-  int res = radio.write(request, 2);
-  
-  Serial.print(res); Serial.print(" -> ");
-  
-  // Put nrf24 in receive mode
-  radio.startListening();
-  
-  // Sleep the MCU while waiting for response
-  goToSleep(true);
-  
-  Serial.print(" -> Wake -> Got ");
-  
-  if(timeout) {
-    Serial.print("nothing");
+void loop(void) { 
+  // Replace this with Arduino sleep + WDT timeout
+  delay(3000);
 
-    radio.powerDown();
-    
-  } else {
-    // checkRadio() has been executed, do stuff.    
-    for(int i = 0; i < RF24_PAYLOAD; i++) {
-      Serial.print(packet[i], HEX); Serial.print(" ");
+  radio.powerUp(); //delay(50);
+
+  Serial.print("Request ");
+
+  // Reset flags
+  tx = false; fail = false;
+
+  // Send status request to base. This command power up the radio
+  radio.startWrite(request, 2);
+  
+  // Replace this with Arduino sleep
+  while(!tx && !fail) { delay(10); }
+
+  if(tx) { 
+    // Transmission was successful, now wait a reply
+
+    Serial.print(" -> Listening ");
+
+    // Put nrf24 in receive mode
+    radio.startListening();
+
+    // Reset flags
+    rx = false; fail = false;
+
+    // Wait for nrf24 to do its magic
+    // TODO:Replace this with Arduino sleep + WDT timeout
+    int retries = 0;
+    while(!rx || !fail) {
+      delay(10); retries++;
+      if(retries == 20) break;
     }
+
+    if(rx) {
+      // We got something
+
+      // Read it
+      radio.read(packet, RF24_PAYLOAD);
+
+      Serial.print("-> Got ");
+
+      for(int i = 0; i < RF24_PAYLOAD; i++) {
+        Serial.print(packet[i], HEX); Serial.print(" ");
+      }
+      Serial.println();
+
+      // TODO: do something here
+    } else {
+      // RX timed out. Restart from scratch.
+      Serial.println(" -> Rx timeout");  
+    }
+
+    radio.stopListening();
+
+  } else {
+    Serial.println(" -> Tx Error");
   }
   
-  radio.stopListening();
-  
-  Serial.print(" -> ");
-}
-
-
-void goToSleep(bool isTimeout) {
-  Serial.print("Sleep"); delay(10);
-  
-  // Enable interupt timeout
-  setWdt(isTimeout);
-  
-  // Go to sleep
-  sleep_mode();
+  // It's done. Now, rest.
+  radio.powerDown();
 }
 
 void checkRadio(void) {
-  wdt_disable();
-  
   // What happened?
-  bool tx,fail,rx;
   radio.whatHappened(tx,fail,rx);
-  
-  // Did we receive a message?
-  if (rx) {
-    // Power down nrf24
+
+  if(tx || fail)
     radio.powerDown();
-    
-    // Read the last packet
-    radio.read(packet, RF24_PAYLOAD);
-  }
+
+  Serial.print("[tx:");
+  Serial.print(tx);
+  Serial.print(" rx: ");
+  Serial.print(rx);
+  Serial.print("fail: ");
+  Serial.print(fail);
+  Serial.print("]" );
+}
+
+/*
+void goToSleep(bool isTimeout) {
+  Serial.print("Sleep"); delay(10);
+
+  timeout = true;
+
+  delay(3000);
+  
+  // Enable interupt timeout
+  //setWdt(isTimeout);
+  
+  // Go to sleep
+  //sleep_mode();
 }
 
 void setWdt(bool isTimeout) {
@@ -148,7 +179,7 @@ void setWdt(bool isTimeout) {
   byte bits;
   
   if(isTimeout) {
-    bits = (1<<WDP2) /*| (1<<WDP1)*/;
+    bits = (1<<WDP2) | (1<<WDP1);
     timeout = false;
   } else {
     bits = (1<<WDP3) | (1<<WDP0);
@@ -174,3 +205,4 @@ ISR(WDT_vect) {
   
   sei();
 }
+*/
