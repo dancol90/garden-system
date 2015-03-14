@@ -1,3 +1,5 @@
 *.epf
 
 *.b#*
+battery.numbers
+sim

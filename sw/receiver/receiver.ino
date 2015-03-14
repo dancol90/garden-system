@@ -18,6 +18,10 @@
 
 // -----------------------------------------
 
+void goToSleep(uint8_t timeout = 0xFF);
+
+// -----------------------------------------
+
 RF24 radio(RF24_CE, RF24_CSN);
 
 const uint64_t in_pipe  = 0xF0F0F0F0E1LL;
@@ -29,17 +33,16 @@ byte packet[8];
 bool timeout, rx, tx, fail;
 
 void setup(void) {
-  Serial.begin(115200);
-  
-  Serial.print("Setup -> ");
-  
+  //Serial.begin(115200);
+
   // Turn down unneeded peripherals
+  ADCSRA = 0;
   power_adc_disable();
   //power_timer0_disable();
   power_timer1_disable();
   power_timer2_disable();
   power_twi_disable();
-  //power_usart0_disable();
+  power_usart0_disable();
   
   // Set sleep tothe most power-saving mode.
   set_sleep_mode(SLEEP_MODE_PWR_DOWN);
@@ -64,7 +67,7 @@ void setup(void) {
   radio.openWritingPipe(RF24_PIPE);
   
   // Power down nrf24
-  //radio.powerDown();
+  radio.powerDown();
   
   // Attach interrupt
   attachInterrupt(1, checkRadio, FALLING);
@@ -72,17 +75,15 @@ void setup(void) {
   // Init motor pins
   pinMode(MOTOR_1, OUTPUT);
   pinMode(MOTOR_2, OUTPUT);
-
-  Serial.println("Ready.");
 }
 
 void loop(void) { 
   // Replace this with Arduino sleep + WDT timeout
-  delay(3000);
+  goToSleep(WDTO_8S);
 
-  radio.powerUp(); //delay(50);
-
-  Serial.print("Request ");
+  radio.powerUp();
+  // Wait until radio is fully awake
+  delay(50);
 
   // Reset flags
   tx = false; fail = false;
@@ -90,13 +91,10 @@ void loop(void) {
   // Send status request to base. This command power up the radio
   radio.startWrite(request, 2);
   
-  // Replace this with Arduino sleep
-  while(!tx && !fail) { delay(10); }
+  goToSleep();
 
   if(tx) { 
     // Transmission was successful, now wait a reply
-
-    Serial.print(" -> Listening ");
 
     // Put nrf24 in receive mode
     radio.startListening();
@@ -105,12 +103,7 @@ void loop(void) {
     rx = false; fail = false;
 
     // Wait for nrf24 to do its magic
-    // TODO:Replace this with Arduino sleep + WDT timeout
-    int retries = 0;
-    while(!rx || !fail) {
-      delay(10); retries++;
-      if(retries == 20) break;
-    }
+    goToSleep(WDTO_60MS);
 
     if(rx) {
       // We got something
@@ -118,81 +111,52 @@ void loop(void) {
       // Read it
       radio.read(packet, RF24_PAYLOAD);
 
-      Serial.print("-> Got ");
+      /*Serial.print("-> Got ");
 
       for(int i = 0; i < RF24_PAYLOAD; i++) {
         Serial.print(packet[i], HEX); Serial.print(" ");
       }
-      Serial.println();
+      Serial.println();*/
 
       // TODO: do something here
-    } else {
+      delay(50);
+    } /* else {
       // RX timed out. Restart from scratch.
       Serial.println(" -> Rx timeout");  
-    }
+    } */
 
     radio.stopListening();
 
-  } else {
+  } /* else {
     Serial.println(" -> Tx Error");
-  }
+  }*/
   
   // It's done. Now, rest.
   radio.powerDown();
 }
 
 void checkRadio(void) {
+  // Disable wdt.
+  wdt_disable();
+
   // What happened?
   radio.whatHappened(tx,fail,rx);
 
   if(tx || fail)
     radio.powerDown();
-
-  Serial.print("[tx:");
-  Serial.print(tx);
-  Serial.print(" rx: ");
-  Serial.print(rx);
-  Serial.print("fail: ");
-  Serial.print(fail);
-  Serial.print("]" );
 }
 
-/*
-void goToSleep(bool isTimeout) {
-  Serial.print("Sleep"); delay(10);
 
-  timeout = true;
-
-  delay(3000);
-  
-  // Enable interupt timeout
-  //setWdt(isTimeout);
-  
-  // Go to sleep
-  //sleep_mode();
-}
-
-void setWdt(bool isTimeout) {
-  // Disable global interrupts
-  cli();
-  
-  byte bits;
-  
-  if(isTimeout) {
-    bits = (1<<WDP2) | (1<<WDP1);
-    timeout = false;
-  } else {
-    bits = (1<<WDP3) | (1<<WDP0);
+void goToSleep(uint8_t timeout) {
+  if(timeout != 0xFF) {
+    // Enable register changes
+    WDTCSR |= (1<<WDCE) | (1<<WDE);
+    // Enable Interrupt mode, 1s timeout
+    WDTCSR = (1<<WDIE) | timeout; 
   }
-  
-  // Enable register changes
-  WDTCSR |= (1<<WDCE) | (1<<WDE);
-  // Enable Interrupt mode, 1s timeout
-  WDTCSR = (1<<WDIE) | bits; 
 
-  
-  // Enable global interrupts
-  sei();
+  // Go to sleep
+  sleep_mode();
 }
 
 ISR(WDT_vect) {
@@ -201,8 +165,5 @@ ISR(WDT_vect) {
   // Disable wdt.
   wdt_disable();
   
-  timeout = true;
-  
   sei();
 }
-*/
