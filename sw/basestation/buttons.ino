@@ -1,12 +1,3 @@
-// ############################################################################################
-
-const uint8_t button_timer_interval = 15;
-const uint8_t button_analog_threshold = 100;
-
-// ############################################################################################
-
-
-uint8_t button_pins[] = { A2, A1, 4, 5 };
 ButtonState buttons[4];
 
 void init_buttons() {
@@ -20,7 +11,7 @@ void init_buttons() {
 void update_buttons() {
     for (int i = 0; i < 4; i++) {
         // Reset state
-        buttons[i].changed = FALSE;
+        buttons[i].changed = false;
         
         uint8_t r = !digitalRead(button_pins[i]);
 
@@ -30,7 +21,7 @@ void update_buttons() {
         } else if (millis() - buttons[i].timer > button_timer_interval) {
             if (buttons[i].state != r) {
                 buttons[i].state = r;
-                buttons[i].changed = TRUE;
+                buttons[i].changed = true;
             }
         }
     }
