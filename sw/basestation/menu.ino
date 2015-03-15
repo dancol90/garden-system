@@ -24,8 +24,8 @@ void init_menu() {
 
     sub = new Menu(root, F("Impostazioni"));
 
-        sub->addItem(new NumericSelector(sub, F("Retroilluminazione"), (int&)backlight, 1, 10));
-        sub->addItem(new NumericSelector(sub, F("Contrasto"), (int&)contrast, 1, 10));
+        sub->addItem(new NumericSelector(sub, F("Retroilluminazione"), (int&)state.backlight, 1, 10));
+        sub->addItem(new NumericSelector(sub, F("Contrasto"), (int&)state.contrast, 1, 10));
 
         root->addItem(sub);
 

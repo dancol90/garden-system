@@ -12,5 +12,14 @@ struct ButtonState {
     uint8_t state   :1;
     
     uint8_t read    :1;
-    uint8_t timer;
+    long timer;
+};
+
+
+struct ApplicationState {
+	uint8_t receiver_no : 2;
+	uint8_t menu_active : 1;
+
+	uint8_t backlight;
+	uint8_t contrast;
 };
