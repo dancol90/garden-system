@@ -24,7 +24,7 @@ MenuController menu;
 void setup() {
     Serial.begin(9600);
 
-    memset(&state, 0, sizeof(state));
+    memset(&state, 0, sizeof(ApplicationState));
 
     Wire.begin();
 
@@ -41,23 +41,15 @@ void loop() {
     // Update button states
     update_buttons();
 
-    // Update homescreen state
-    update_homescreen();
+    if (state.menu_active) {
+        update_menu();
+    } else {
+        // Update homescreen state
+        update_homescreen();
 
-    // Draw homescreen
-    draw_homescreen();
-
-    /*if (is_pressed(BTN_UP))
-        menu.prev();
-    else if (is_pressed(BTN_DOWN))
-        menu.next();
-    else if (is_pressed(BTN_OK))
-        menu.select();
-    else if (is_pressed(BTN_BACK))
-        menu.back();
-
-
-    menu.draw();*/
+        // Draw homescreen
+        draw_homescreen();
+    }
 
     delay(10);
 }

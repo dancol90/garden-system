@@ -24,8 +24,8 @@ void init_menu() {
 
     sub = new Menu(root, F("Impostazioni"));
 
-        sub->addItem(new NumericSelector(sub, F("Retroilluminazione"), (int&)state.backlight, 1, 10));
-        sub->addItem(new NumericSelector(sub, F("Contrasto"), (int&)state.contrast, 1, 10));
+        sub->addItem(new NumericSelector(sub, F("Retroilluminazione"), state.backlight, 1, 10));
+        sub->addItem(new NumericSelector(sub, F("Contrasto"), state.contrast, 1, 10));
 
         root->addItem(sub);
 
@@ -35,6 +35,21 @@ void init_menu() {
     // timer_edit->addItem(new Action(timer_edit, F("Elimina")));
 
     menu = MenuController(root, &dr);
+}
+
+void update_menu() {
+    if (is_pressed(BTN_UP))
+        menu.prev();
+    else if (is_pressed(BTN_DOWN))
+        menu.next();
+    else if (is_pressed(BTN_OK))
+        menu.select();
+    else if (is_pressed(BTN_BACK)) {
+        menu.back();
+        if (menu.canExit()) state.menu_active = false;
+    }
+
+    menu.draw();
 }
 
 // ############################################################################################

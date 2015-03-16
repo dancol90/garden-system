@@ -33,9 +33,9 @@ void draw_homescreen() {
 
 void update_homescreen() {
     if (is_pressed(BTN_UP))
-        state.receiver_no = (state.receiver_no + 1) % RECEIVER_COUNT;
+        state.receiver_no = abs( (state.receiver_no - 1) % RECEIVER_COUNT );
     else if (is_pressed(BTN_DOWN))
-        state.receiver_no = abs((state.receiver_no - 1) % RECEIVER_COUNT);
+        state.receiver_no = (state.receiver_no + 1) % RECEIVER_COUNT;
     else if (is_pressed(BTN_OK))
-        return;
+        state.menu_active = true;
 }

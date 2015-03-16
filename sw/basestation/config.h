@@ -16,8 +16,8 @@ const uint8_t button_analog_threshold = 100;
 const uint8_t button_pins[] = { A2, A1, 4, 5 };
 
 enum Button {
-	BTN_DOWN,
 	BTN_UP,
+	BTN_DOWN,
 	BTN_OK,
 	BTN_BACK
 };
