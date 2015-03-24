@@ -1,3 +1,11 @@
+/*############################################################################################
+ Garden System
+ Wireless controller for watering electropumps
+
+ Author: Daniele Colanardi
+ License: BSD, see LICENSE file
+############################################################################################*/
+
 #define font_w 16
 #define font_h 22
 

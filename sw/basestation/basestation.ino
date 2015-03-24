@@ -1,3 +1,11 @@
+/*############################################################################################
+ Garden System
+ Wireless controller for watering electropumps
+
+ Author: Daniele Colanardi
+ License: BSD, see LICENSE file
+############################################################################################*/
+
 #include <SPI.h>
 #include <Wire.h>
 
@@ -28,9 +36,13 @@ void setup() {
 
     Wire.begin();
 
+    init_rtc();
+
     init_buttons();
     init_lcd();
     init_menu();
+
+    //Serial.println("-----");
 }
 
 void loop() {
@@ -51,5 +63,5 @@ void loop() {
         draw_homescreen();
     }
 
-    delay(10);
+    delay(50);
 }

@@ -1,3 +1,11 @@
+/*############################################################################################
+ Garden System
+ Wireless controller for watering electropumps
+
+ Author: Daniele Colanardi
+ License: BSD, see LICENSE file
+############################################################################################*/
+
 const uint8_t LCD_DC  = 8;
 const uint8_t LCD_CS  = 9;
 const uint8_t LCD_LED = 6;

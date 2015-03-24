@@ -1,4 +1,11 @@
- 
+/*############################################################################################
+ Garden System
+ Wireless controller for watering electropumps
+
+ Author: Daniele Colanardi
+ License: BSD, see LICENSE file
+############################################################################################*/ 
+
 void draw_selector(int x, int y) {
     lcd.drawHLine(x    , y    , 5, BLACK);
     lcd.drawHLine(x + 1, y + 1, 3, BLACK);
@@ -7,7 +14,7 @@ void draw_selector(int x, int y) {
 
 void draw_homescreen() {
     
-    lcd.clearDisplay();
+    lcd.clear();
 
     draw_big_digit(4,          1, now.s.h   / 10);   
     draw_big_digit(6 + font_w, 1, now.s.h   % 10); 
@@ -28,7 +35,7 @@ void draw_homescreen() {
 
     draw_selector(18 + 42 * state.receiver_no, 35);
 
-    lcd.display();
+    lcd.update();
 }
 
 void update_homescreen() {
