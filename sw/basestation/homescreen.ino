@@ -27,22 +27,33 @@ void draw_homescreen() {
     lcd.setCursor(1, 26);
     lcd.print(F("Next: 15:00 \x1a 16:00"));
 
-    lcd.fillRect( 0, 39, 42, 9, BLACK);
-    lcd.drawChar(18, 40, '1', WHITE);
+    uint8_t rect_w = LCD_WIDTH / RECEIVER_COUNT;
+    uint8_t char_x = (rect_w / 2) - 3;
+    uint8_t offset = 0;
 
-    lcd.drawRect(42, 39, 42, 9, BLACK);
-    lcd.drawChar(60, 40, '2', BLACK);
+    lcd.drawHLine(0, 39, LCD_WIDTH, BLACK);
 
-    draw_selector(18 + 42 * state.receiver_no, 35);
+    for (uint8_t i = 0; i < RECEIVER_COUNT; i++) {
+        if (receivers[i].active)
+            lcd.fillRect(offset, 39, rect_w, 9, BLACK);
+        else if (i > 0)
+            lcd.drawVLine(offset, 39, 9, BLACK);
+
+        lcd.drawChar(offset + char_x, 40, '1' + i, !receivers[i].active); 
+
+        offset += rect_w;       
+    }
+
+    draw_selector(char_x + rect_w * state.selected_recv, 35);
 
     lcd.update();
 }
 
 void update_homescreen() {
     if (is_pressed(BTN_UP))
-        state.receiver_no = abs( (state.receiver_no - 1) % RECEIVER_COUNT );
+        state.selected_recv = abs( (state.selected_recv - 1) % RECEIVER_COUNT );
     else if (is_pressed(BTN_DOWN))
-        state.receiver_no = (state.receiver_no + 1) % RECEIVER_COUNT;
+        state.selected_recv = (state.selected_recv + 1) % RECEIVER_COUNT;
     else if (is_pressed(BTN_OK))
         state.menu_active = true;
 }

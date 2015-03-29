@@ -25,14 +25,21 @@
 Time now;
 ApplicationState state;
 
+ReceiverState receivers[RECEIVER_COUNT];
+
 LightPCD8544 lcd = LightPCD8544(LCD_DC, LCD_CS);
 MenuController menu;
 
 // ############################################################################################
+
 void setup() {
     Serial.begin(9600);
 
     memset(&state, 0, sizeof(ApplicationState));
+    
+    // Clear data.
+    // TODO: load from eeprom
+    memset(&receivers, 0, sizeof(ReceiverState) * RECEIVER_COUNT);
 
     Wire.begin();
 
@@ -41,8 +48,6 @@ void setup() {
     init_buttons();
     init_lcd();
     init_menu();
-
-    //Serial.println("-----");
 }
 
 void loop() {

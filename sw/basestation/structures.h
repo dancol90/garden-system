@@ -14,6 +14,11 @@ union Time {
     } s;
 };
 
+struct Interval {
+    Time start;
+    Time end;
+};
+
 struct ButtonState {
     uint8_t changed :1;
     uint8_t state   :1;
@@ -29,6 +34,12 @@ struct ApplicationState {
 
     uint8_t : 0;
 
-    uint8_t receiver_no : 2;
+    uint8_t selected_recv : 3;
     uint8_t menu_active : 1;
+};
+
+
+struct ReceiverState {
+    bool active;
+    Interval jobs[10];
 };
