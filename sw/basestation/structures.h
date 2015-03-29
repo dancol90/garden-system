@@ -6,6 +6,9 @@
  License: BSD, see LICENSE file
 ############################################################################################*/
 
+#ifndef structures_h
+#define structures_h
+
 union Time {
     uint16_t minutes;
     struct {
@@ -43,3 +46,5 @@ struct ReceiverState {
     bool active;
     Interval jobs[10];
 };
+
+#endif

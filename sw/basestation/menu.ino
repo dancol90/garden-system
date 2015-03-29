@@ -9,7 +9,9 @@
 Menu* root = new Menu(NULL, NULL);
 Menu* timer_edit;
 
-NokiaLcdDrawer dr = NokiaLcdDrawer(lcd);
+LcdDrawer dr = LcdDrawer(lcd);
+
+Interval tmp_job; byte tmp_ind;
 
 void init_menu() {
 	Menu* sub;
@@ -19,22 +21,24 @@ void init_menu() {
     root->addItem(new Action(root, F("Forza accensione")));
     root->addItem(new Action(root, F("Forza spegnimento")));
 
-    /*
-    sub = new Menu(root, F("Timer"), &timer_list_entered);
+    
+    sub = new Menu(root, F("Timer"));
 
-        sub->addItem(new Action(sub, F("Aggiungi"), timer_selected, 1));
-        sub->addItem(new Action(sub, F("15:00 -> 16:10"), timer_selected, 2));
+    for (uint8_t i = 0; i < 10; i++) {
+        sub->addItem(new Action(sub, F("Job"), timer_selected, i));        
+    }
 
-        root->addItem(sub);
+    root->addItem(sub);
 
 
     timer_edit = new Menu(sub, F("Edit"));
 
-    timer_edit->addItem(new NumericSelector(timer_edit, F("Ore"), h, 0, 24));
-    timer_edit->addItem(new NumericSelector(timer_edit, F("Minuti"), m, 0, 60));
-    timer_edit->addItem(new Action(timer_edit, F("Elimina")));
-    */
-    
+        timer_edit->addItem(new TimeSelector(timer_edit, F("Ore"),    tmp_job.start));
+        timer_edit->addItem(new TimeSelector(timer_edit, F("Minuti"), tmp_job.start));
+
+        timer_edit->addItem(new Action(timer_edit, F("Salva"), timer_save));
+        //timer_edit->addItem(new Action(timer_edit, F("Disabilita")));
+
     sub = new Menu(root, F("Impostazioni"));
 
         sub->addItem(new NumericSelector(sub, F("Retroilluminazione"), state.backlight, 1, 10));
@@ -61,11 +65,17 @@ void update_menu() {
 }
 
 // ############################################################################################
+void timer_selected(int index) {
+    tmp_job = receivers[state.selected_recv].jobs[index];
+    tmp_ind = index;
 
-void timer_list_entered(Menu* menu) {
-    return;
+    menu.takeControl(timer_edit);
 }
 
-void timer_selected(int index) {
-    menu.takeControl(timer_edit);
+void timer_save(int ignore) {
+    receivers[state.selected_recv].jobs[tmp_ind] = tmp_job;
+
+    // TODO: save in EEPROM
+
+    print_jobs();
 }
