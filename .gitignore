@@ -1,5 +1,6 @@
 *.epf
 
 *.b#*
+*.s#*
 battery.numbers
 sim

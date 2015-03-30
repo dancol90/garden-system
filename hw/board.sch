@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="6.6.0">
+<eagle version="7.2.0">
 <drawing>
 <settings>
 <setting alwaysvectorfont="no"/>
@@ -7082,9 +7082,9 @@ Source: AVX .. aphvc.pdf</description>
 <label x="198.12" y="45.72" size="1.778" layer="95"/>
 </segment>
 <segment>
-<pinref part="PROMINI" gate="G$1" pin="12"/>
-<wire x1="142.24" y1="91.44" x2="162.56" y2="91.44" width="0.1524" layer="91"/>
-<label x="149.86" y="91.44" size="1.778" layer="95"/>
+<pinref part="PROMINI" gate="G$1" pin="11"/>
+<wire x1="142.24" y1="88.9" x2="162.56" y2="88.9" width="0.1524" layer="91"/>
+<label x="149.86" y="88.9" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="SCK" class="0">
@@ -7135,9 +7135,9 @@ Source: AVX .. aphvc.pdf</description>
 <label x="180.34" y="43.18" size="1.778" layer="95" rot="MR0"/>
 </segment>
 <segment>
-<pinref part="PROMINI" gate="G$1" pin="11"/>
-<wire x1="142.24" y1="88.9" x2="162.56" y2="88.9" width="0.1524" layer="91"/>
-<label x="149.86" y="88.9" size="1.778" layer="95"/>
+<pinref part="PROMINI" gate="G$1" pin="12"/>
+<wire x1="142.24" y1="91.44" x2="162.56" y2="91.44" width="0.1524" layer="91"/>
+<label x="149.86" y="91.44" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="+3V3" class="0">
