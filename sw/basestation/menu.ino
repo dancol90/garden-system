@@ -33,8 +33,8 @@ void init_menu() {
 
     timer_edit = new Menu(sub, F("Edit"));
 
-        timer_edit->addItem(new TimeSelector(timer_edit, F("Ore"),    tmp_job.start));
-        timer_edit->addItem(new TimeSelector(timer_edit, F("Minuti"), tmp_job.start));
+        timer_edit->addItem(new TimeSelector(timer_edit, F("Accendi alle"), tmp_job.start));
+        timer_edit->addItem(new TimeSelector(timer_edit, F("Spegni alle"),  tmp_job.end));
 
         timer_edit->addItem(new Action(timer_edit, F("Salva"), timer_save));
         //timer_edit->addItem(new Action(timer_edit, F("Disabilita")));

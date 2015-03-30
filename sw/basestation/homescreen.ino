@@ -51,7 +51,7 @@ void draw_homescreen() {
 
 void update_homescreen() {
     if (is_pressed(BTN_UP))
-        state.selected_recv = abs( (state.selected_recv - 1) % RECEIVER_COUNT );
+        state.selected_recv = (state.selected_recv == 0) ? (RECEIVER_COUNT - 1) : (state.selected_recv - 1);
     else if (is_pressed(BTN_DOWN))
         state.selected_recv = (state.selected_recv + 1) % RECEIVER_COUNT;
     else if (is_pressed(BTN_OK))

@@ -13,6 +13,9 @@ class TimeSelector : public MenuItem {
 
         Time getValue() { return variable; }
 
+        // Return which element is being modified (1 for minute, 0 for hours)
+        uint8_t getStage() { return stage; }
+
         char getTypeId() { return 'd'; };
 
         const char* getSecondaryText() {
@@ -29,6 +32,7 @@ class TimeSelector : public MenuItem {
 
             return 1;
         }
+
         int deactivate(){
             variable = oldValue;
 
@@ -36,11 +40,23 @@ class TimeSelector : public MenuItem {
         }
 
         void doNext() {
-
+            if (stage) {
+                // Minutes
+                variable.s.m = (variable.s.m + 1) % 60;
+            } else {
+                // Hours
+                variable.s.h = (variable.s.h + 1) % 24;
+            }
         }
 
         void doPrev() {
-
+            if (stage) {
+                // Minutes
+                variable.s.m = variable.s.m == 0 ? 59 : variable.s.m - 1;
+            } else {
+                // Hours
+                variable.s.h = variable.s.h == 0 ? 23 : variable.s.h - 1;
+            }
         }
 
         MenuItem* action() {
@@ -61,21 +77,19 @@ class LcdDrawer : public NokiaLcdDrawer {
 
                 // Draw title
                 drawCenterText(t, 0);
-                //lcd.drawLine(0, 8, LCD_WIDTH, 8, 1) ;
                 
                 // Draw a rect around the value
-                lcd.drawRect(8, 18, 68, 14, 1) ;
+                lcd.drawRect( 7, 18, 31, 14, 1);
+                lcd.drawRect(46, 18, 31, 14, 1);
              
                 // Some decoration
-                lcd.setCursor(11, 21);
-                lcd.print('<');
-                
+                lcd.drawChar(11 + 39 * t->getStage(), 21, '<', BLACK);
+                lcd.drawChar(31 + 39 * t->getStage(), 21, '>', BLACK);
+
                 // Guess the x pos to center the value number
-                drawCenterNumber(t->getValue().s.h, 21);
+                drawCenterNumber(t->getValue().s.h, 21,  7, 38);
+                drawCenterNumber(t->getValue().s.m, 21, 46, 77);
                 
-                // Still some decorations
-                lcd.setCursor(69, 21);
-                lcd.println('>');
             }
         } 
 
