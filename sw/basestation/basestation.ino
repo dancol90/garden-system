@@ -20,9 +20,14 @@
 #include "config.h"
 #include "digit_font.h"
 
-#include "TimeSelector.h"
+#define selected_recv receivers[state.selected_recv]
+
+#define get_job(index) selected_recv.jobs[index]
+#define set_job(index, job) selected_recv.jobs[index] = job
 
 // ############################################################################################
+
+RF24 radio(RF24_CE, RF24_CSN);
 
 Time now;
 ApplicationState state;
@@ -31,6 +36,8 @@ ReceiverState receivers[RECEIVER_COUNT];
 
 LightPCD8544 lcd = LightPCD8544(LCD_DC, LCD_CS);
 MenuController menu;
+
+#include "menu_custom.h"
 
 // ############################################################################################
 
@@ -46,6 +53,8 @@ void setup() {
     Wire.begin();
 
     init_rtc();
+
+    init_rf();
 
     init_buttons();
     init_lcd();
@@ -73,7 +82,7 @@ void loop() {
     delay(50);
 }
 
-void print_jobs() {
+/*void print_jobs() {
     for (byte a = 0; a < RECEIVER_COUNT; a++) {
         Serial.print(F("Receiver ")); Serial.print(a);
         if (receivers[a].active) Serial.print(F("[active]"));
@@ -98,4 +107,4 @@ void print_job(Interval& t) {
 void print_time(Time& t) {
     Serial.print(t.s.h);Serial.print(':');Serial.print(t.s.m);
    
-}
+}*/

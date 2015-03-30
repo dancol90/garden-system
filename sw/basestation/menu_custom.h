@@ -1,5 +1,27 @@
 #include "structures.h"
 
+// Job name is generated on the fly, so I can use a global buffer to spare a LOT of RAM
+char job_name[15];
+
+class JobEntry : public Action<uint8_t> {
+    public:
+        JobEntry(MenuItem* parent, ActionCallback callback, int index) : Action(parent, NULL, callback, index) {
+            this->is_flash = 0;
+        }
+
+        const char* getText() {
+            Interval& job = get_job(this->data);
+
+            sprintf(job_name,
+                "%2d:%02d -> %2d:%02d",
+                job.start.s.h, job.start.s.m,
+                job.end.s.h,   job.end.s.m
+            );
+
+            return job_name;
+        }
+};
+
 class TimeSelector : public MenuItem {
     private:
         Time& variable;
@@ -19,7 +41,7 @@ class TimeSelector : public MenuItem {
         char getTypeId() { return 'd'; };
 
         const char* getSecondaryText() {
-            sprintf(valueStr, "<%d:%d>", variable.s.h, variable.s.m);
+            sprintf(valueStr, "<%2d:%02d>", variable.s.h, variable.s.m);
 
             return valueStr;
         }

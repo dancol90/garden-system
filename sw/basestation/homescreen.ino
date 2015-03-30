@@ -59,5 +59,5 @@ void update_homescreen() {
     else if (is_pressed(BTN_DOWN))
         state.selected_recv = (state.selected_recv + 1) % RECEIVER_COUNT;
     else if (is_pressed(BTN_OK))
-        state.menu_active = true;
+        enter_menu();
 }
