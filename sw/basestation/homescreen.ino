@@ -6,6 +6,9 @@
  License: BSD, see LICENSE file
 ############################################################################################*/ 
 
+uint8_t rect_w = LCD_WIDTH / RECEIVER_COUNT;
+
+
 void draw_selector(int x, int y) {
     lcd.drawHLine(x    , y    , 5, BLACK);
     lcd.drawHLine(x + 1, y + 1, 3, BLACK);
@@ -27,9 +30,7 @@ void draw_homescreen() {
     lcd.setCursor(1, 26);
     lcd.print(F("Next: 15:00 \x1a 16:00"));
 
-    uint8_t rect_w = LCD_WIDTH / RECEIVER_COUNT;
-    uint8_t char_x = (rect_w / 2) - 3;
-    uint8_t offset = 0;
+    uint8_t offset = 0, char_x, c;
 
     lcd.drawHLine(0, 39, LCD_WIDTH, BLACK);
 
@@ -39,12 +40,15 @@ void draw_homescreen() {
         else if (i > 0)
             lcd.drawVLine(offset, 39, 9, BLACK);
 
-        lcd.drawChar(offset + char_x, 40, '1' + i, !receivers[i].active); 
+        c = '1' + i;
+        char_x = offset + (rect_w - lcd.getCharWidth(c)) / 2;
+
+        lcd.drawChar(char_x, 40, c, !receivers[i].active); 
 
         offset += rect_w;       
     }
 
-    draw_selector(char_x + rect_w * state.selected_recv, 35);
+    draw_selector(rect_w / 2 + rect_w * state.selected_recv - 3, 35);
 
     lcd.update();
 }
