@@ -29,3 +29,8 @@ enum Button {
 	BTN_OK,
 	BTN_BACK
 };
+
+
+const uint8_t jobs_count = 10;
+const uint8_t eeprom_jobs_start = 0;
+const uint8_t eeprom_strings_start = eeprom_jobs_start + sizeof(Interval) * jobs_count ;

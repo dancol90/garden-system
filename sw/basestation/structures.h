@@ -20,6 +20,8 @@ union Time {
 struct Interval {
     Time start;
     Time end;
+
+    bool enabled : 1;
 };
 
 struct ButtonState {
@@ -43,8 +45,9 @@ struct ApplicationState {
 
 
 struct ReceiverState {
-    bool active;
-    Interval jobs[10];
+    bool active : 1;
+
+    //Interval jobs[5];
 };
 
 #endif

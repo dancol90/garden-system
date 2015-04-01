@@ -18,16 +18,21 @@ class JobEntry : public Action<uint8_t> {
         }
 
         const char* getText() {
-            Interval& job = get_job(this->data);
+            get_job_string(this->data, job_name);
+
+            /*Interval job = get_job(this->data);
 
             sprintf(job_name,
                 "%2d:%02d -> %2d:%02d",
                 job.start.s.h, job.start.s.m,
                 job.end.s.h,   job.end.s.m
             );
+            */
 
             return job_name;
         }
+
+        //bool isEnabled() { return get_job(this->data).enabled; }
 };
 
 class TimeSelector : public MenuItem {

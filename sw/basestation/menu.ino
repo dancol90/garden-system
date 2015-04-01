@@ -14,14 +14,16 @@ LcdDrawer dr = LcdDrawer(lcd);
 Interval job_copy; uint8_t job_ind;
 
 void init_menu() {
+    Serial.println(free_ram());
+
 	Menu* sub;
 
     root->setText(F("Menu"));
 
-    root->addItem(new Action<uint8_t>(root, F("Forza accensione"),  force_recv, 1));
-    root->addItem(new Action<uint8_t>(root, F("Forza spegnimento"), force_recv, 0));
     root->addItem(new Action<byte>(root, F("Forza accensione"),  force_recv, 1));
     root->addItem(new Action<byte>(root, F("Forza spegnimento"), force_recv, 0));
+    
+    Serial.println(free_ram());
 
     
     sub = new Menu(root, F("Timer"));
@@ -30,16 +32,21 @@ void init_menu() {
         sub->addItem(new JobEntry(sub, job_selected, i));        
     }
 
+    sub->addItem(new Action<byte>(sub, F("Aggiungi"), job_add, NULL));
+
     root->addItem(sub);
 
-
+    Serial.println(free_ram());
+    
     timer_edit = new Menu(sub, F("Edit"));
 
         timer_edit->addItem(new TimeSelector(timer_edit, F("Accendi alle"), job_copy.start));
         timer_edit->addItem(new TimeSelector(timer_edit, F("Spegni alle"),  job_copy.end));
 
-        timer_edit->addItem(new Action<uint8_t>(timer_edit, F("Salva"), timer_save, 0));
+        timer_edit->addItem(new Action<uint8_t>(timer_edit, F("Salva"), job_save, 0));
         //timer_edit->addItem(new Action(timer_edit, F("Disabilita")));
+
+    Serial.println(free_ram());
 
     sub = new Menu(root, F("Impostazioni"));
 
@@ -49,6 +56,8 @@ void init_menu() {
         root->addItem(sub);
 
     menu = MenuController(root, &dr);
+
+    Serial.println(free_ram());
 }
 
 void update_menu() {
@@ -67,7 +76,7 @@ void update_menu() {
         changed = false;
 
     if (changed)
-    menu.draw();
+        menu.draw();
 }
 
 void enter_menu() {
@@ -107,10 +116,14 @@ void job_save(uint8_t ignore) {
     print_job(job_copy);
     //set_job(job_ind, job_copy);
 
+    // TODO: disable "Aggiungi" item if all jobs are enabled
     // TODO: save in EEPROM
+
+    menu.back();
 }
 
+void force_recv(uint8_t s) {
+    selected_receiver.active = s;
 
-void force_recv(uint8_t state) {
-    selected_recv.active = state;
+    state.menu_active = false;
 }
