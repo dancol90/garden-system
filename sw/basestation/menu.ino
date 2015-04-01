@@ -14,7 +14,7 @@ LcdDrawer dr = LcdDrawer(lcd);
 Interval job_copy; uint8_t job_ind;
 
 void init_menu() {
-    Serial.println(free_ram());
+    //Serial.println(free_ram());
 
 	Menu* sub;
 
@@ -23,12 +23,12 @@ void init_menu() {
     root->addItem(new Action<byte>(root, F("Forza accensione"),  force_recv, 1));
     root->addItem(new Action<byte>(root, F("Forza spegnimento"), force_recv, 0));
     
-    Serial.println(free_ram());
+    //Serial.println(free_ram());
 
     
     sub = new Menu(root, F("Timer"));
 
-    for (uint8_t i = 0; i < 5; i++) {
+    for (uint8_t i = 0; i < jobs_count; i++) {
         sub->addItem(new JobEntry(sub, job_selected, i));        
     }
 
@@ -36,7 +36,7 @@ void init_menu() {
 
     root->addItem(sub);
 
-    Serial.println(free_ram());
+    //Serial.println(free_ram());
     
     timer_edit = new Menu(sub, F("Edit"));
 
@@ -46,7 +46,7 @@ void init_menu() {
         timer_edit->addItem(new Action<uint8_t>(timer_edit, F("Salva"), job_save, 0));
         //timer_edit->addItem(new Action(timer_edit, F("Disabilita")));
 
-    Serial.println(free_ram());
+    //Serial.println(free_ram());
 
     sub = new Menu(root, F("Impostazioni"));
 
@@ -57,7 +57,7 @@ void init_menu() {
 
     menu = MenuController(root, &dr);
 
-    Serial.println(free_ram());
+    //Serial.println(free_ram());
 }
 
 void update_menu() {
@@ -85,14 +85,14 @@ void enter_menu() {
 
     menu.draw();
 
-    Serial.println(free_ram());
+    //Serial.println(free_ram());
 }
 
 // ############################################################################################
 
 void job_add(uint8_t i) {
     // For each job of the current receiver
-    for(i = 0; i < 10; i++) {
+    for(i = 0; i < jobs_count; i++) {
         // If it's not enabled
         if (!get_job(i).enabled) {
             // Select it
@@ -113,11 +113,9 @@ void job_selected(uint8_t index) {
 }
 
 void job_save(uint8_t ignore) {
-    print_job(job_copy);
-    //set_job(job_ind, job_copy);
+    save_job(job_ind, job_copy);
 
     // TODO: disable "Aggiungi" item if all jobs are enabled
-    // TODO: save in EEPROM
 
     menu.back();
 }

@@ -20,15 +20,6 @@ class JobEntry : public Action<uint8_t> {
         const char* getText() {
             get_job_string(this->data, job_name);
 
-            /*Interval job = get_job(this->data);
-
-            sprintf(job_name,
-                "%2d:%02d -> %2d:%02d",
-                job.start.s.h, job.start.s.m,
-                job.end.s.h,   job.end.s.m
-            );
-            */
-
             return job_name;
         }
 
@@ -105,8 +96,6 @@ class TimeSelector : public MenuItem {
 class LcdDrawer : public NokiaLcdDrawer {
     protected:
         void drawOther(MenuItem* item) {
-            Serial.println("DrawOther!!!");
-
             if (item->getTypeId() == 'd') {
                 TimeSelector* t = (TimeSelector*)item;
 

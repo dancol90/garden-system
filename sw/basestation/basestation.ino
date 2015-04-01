@@ -23,9 +23,6 @@
 
 #define selected_receiver receivers[state.selected_recv]
 
-//#define get_job(index) selected_receiver.jobs[index]
-//#define set_job(index, job) selected_receiver.jobs[index] = job
-
 // ############################################################################################
 
 RF24 radio(RF24_CE, RF24_CSN);
@@ -47,9 +44,10 @@ void setup() {
 
     memset(&state, 0, sizeof(ApplicationState));
     
-    // Clear data.
-    // TODO: load from eeprom
+    // Clear data
     memset(&receivers, 0, sizeof(ReceiverState) * RECEIVER_COUNT);
+
+    init_eeprom();
 
     init_rtc();
 
@@ -95,7 +93,7 @@ void loop() {
         Serial.println(F("-------------------"));
     }
 }
-*/
+
 
 void print_job(Interval& t) {
     print_time(t.start);
@@ -107,3 +105,4 @@ void print_time(Time& t) {
     Serial.print(t.s.h);Serial.print(':');Serial.print(t.s.m);
    
 }
+*/
