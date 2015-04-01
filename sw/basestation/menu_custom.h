@@ -1,7 +1,15 @@
+/*############################################################################################
+ Garden System
+ Wireless controller for watering electropumps
+
+ Author: Daniele Colanardi
+ License: BSD, see LICENSE file
+############################################################################################*/
+
 #include "structures.h"
 
 // Job name is generated on the fly, so I can use a global buffer to spare a LOT of RAM
-char job_name[15];
+char job_name[15] = "ciao";
 
 class JobEntry : public Action<uint8_t> {
     public:

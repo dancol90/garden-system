@@ -60,4 +60,8 @@ void update_homescreen() {
         state.selected_recv = (state.selected_recv + 1) % RECEIVER_COUNT;
     else if (is_pressed(BTN_OK))
         enter_menu();
+
+    if (!state.menu_active)
+        // Draw homescreen
+        draw_homescreen();
 }

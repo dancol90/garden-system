@@ -8,6 +8,7 @@
 
 #include <SPI.h>
 #include <Wire.h>
+#include <EEPROM.h>
 
 #include <LightPCD8544.h>
 #include "nRF24L01.h"
@@ -20,10 +21,10 @@
 #include "config.h"
 #include "digit_font.h"
 
-#define selected_recv receivers[state.selected_recv]
+#define selected_receiver receivers[state.selected_recv]
 
-#define get_job(index) selected_recv.jobs[index]
-#define set_job(index, job) selected_recv.jobs[index] = job
+//#define get_job(index) selected_receiver.jobs[index]
+//#define set_job(index, job) selected_receiver.jobs[index] = job
 
 // ############################################################################################
 
@@ -50,9 +51,9 @@ void setup() {
     // TODO: load from eeprom
     memset(&receivers, 0, sizeof(ReceiverState) * RECEIVER_COUNT);
 
-    Wire.begin();
-
     init_rtc();
+
+    Wire.begin();
 
     init_rf();
 
@@ -74,9 +75,6 @@ void loop() {
     } else {
         // Update homescreen state
         update_homescreen();
-
-        // Draw homescreen
-        draw_homescreen();
     }
 
     delay(50);
@@ -97,6 +95,7 @@ void loop() {
         Serial.println(F("-------------------"));
     }
 }
+*/
 
 void print_job(Interval& t) {
     print_time(t.start);
@@ -107,4 +106,4 @@ void print_job(Interval& t) {
 void print_time(Time& t) {
     Serial.print(t.s.h);Serial.print(':');Serial.print(t.s.m);
    
-}*/
+}

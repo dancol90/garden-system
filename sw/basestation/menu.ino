@@ -20,12 +20,14 @@ void init_menu() {
 
     root->addItem(new Action<uint8_t>(root, F("Forza accensione"),  force_recv, 1));
     root->addItem(new Action<uint8_t>(root, F("Forza spegnimento"), force_recv, 0));
+    root->addItem(new Action<byte>(root, F("Forza accensione"),  force_recv, 1));
+    root->addItem(new Action<byte>(root, F("Forza spegnimento"), force_recv, 0));
 
     
     sub = new Menu(root, F("Timer"));
 
-    for (uint8_t i = 0; i < 10; i++) {
-        sub->addItem(new JobEntry(sub, timer_selected, i));        
+    for (uint8_t i = 0; i < 5; i++) {
+        sub->addItem(new JobEntry(sub, job_selected, i));        
     }
 
     root->addItem(sub);
@@ -50,6 +52,8 @@ void init_menu() {
 }
 
 void update_menu() {
+    bool changed = true;
+
     if (is_pressed(BTN_UP))
         menu.prev();
     else if (is_pressed(BTN_DOWN))
@@ -59,19 +63,38 @@ void update_menu() {
     else if (is_pressed(BTN_BACK)) {
         menu.back();
         if (menu.canExit()) state.menu_active = false;
-    }
+    } else
+        changed = false;
 
+    if (changed)
     menu.draw();
 }
 
 void enter_menu() {
     state.menu_active = true;
     menu.takeControl(root);
+
+    menu.draw();
+
+    Serial.println(free_ram());
 }
 
 // ############################################################################################
-void timer_selected(uint8_t index) {
 
+void job_add(uint8_t i) {
+    // For each job of the current receiver
+    for(i = 0; i < 10; i++) {
+        // If it's not enabled
+        if (!get_job(i).enabled) {
+            // Select it
+            job_selected(i);
+
+            return;
+        }
+    }
+}
+
+void job_selected(uint8_t index) {
     // Save a copy to work with
     job_copy = get_job(index);
     // Save the ref for future save
@@ -80,8 +103,9 @@ void timer_selected(uint8_t index) {
     menu.takeControl(timer_edit);
 }
 
-void timer_save(uint8_t ignore) {
-    set_job(job_ind, job_copy);
+void job_save(uint8_t ignore) {
+    print_job(job_copy);
+    //set_job(job_ind, job_copy);
 
     // TODO: save in EEPROM
 }

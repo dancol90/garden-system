@@ -11,7 +11,7 @@ static uint8_t bcd2bin (uint8_t val) { return val - 6 * (val >> 4); }
 void read_time() {
     Wire.beginTransmission(0x68);
     // Skip seconds register and start from minutes
-    Wire.write(0x01);
+    Wire.write(0x00);
     Wire.endTransmission();
 
     Wire.requestFrom(0x68, 2);
