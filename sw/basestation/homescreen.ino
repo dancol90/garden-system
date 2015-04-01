@@ -28,7 +28,7 @@ void draw_homescreen() {
     draw_big_digit(16 + 3*font_w, 1, now.s.m % 10);
 
     lcd.setCursor(1, 26);
-    lcd.print(F("Next: 15:00 \x1a 16:00"));
+    lcd.print(F("Next:"));
 
     uint8_t offset = 0, char_x, c;
 

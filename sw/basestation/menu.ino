@@ -14,50 +14,42 @@ LcdDrawer dr = LcdDrawer(lcd);
 Interval job_copy; uint8_t job_ind;
 
 void init_menu() {
-    //Serial.println(free_ram());
 
 	Menu* sub;
 
     root->setText(F("Menu"));
 
-    root->addItem(new Action<byte>(root, F("Forza accensione"),  force_recv, 1));
-    root->addItem(new Action<byte>(root, F("Forza spegnimento"), force_recv, 0));
-    
-    //Serial.println(free_ram());
-
-    
+    root->addItem(new Action(root, F("Forza accensione"),  force_recv_on));
+    root->addItem(new Action(root, F("Forza spegnimento"), force_recv_off));
+   
     sub = new Menu(root, F("Timer"));
 
     for (uint8_t i = 0; i < jobs_count; i++) {
         sub->addItem(new JobEntry(sub, job_selected, i));        
     }
 
-    sub->addItem(new Action<byte>(sub, F("Aggiungi"), job_add, NULL));
+    sub->addItem(new Action(sub, F("Aggiungi"), job_add));
 
     root->addItem(sub);
-
-    //Serial.println(free_ram());
     
     timer_edit = new Menu(sub, F("Edit"));
 
         timer_edit->addItem(new TimeSelector(timer_edit, F("Accendi alle"), job_copy.start));
         timer_edit->addItem(new TimeSelector(timer_edit, F("Spegni alle"),  job_copy.end));
 
-        timer_edit->addItem(new Action<uint8_t>(timer_edit, F("Salva"), job_save, 0));
-        //timer_edit->addItem(new Action(timer_edit, F("Disabilita")));
-
-    //Serial.println(free_ram());
+        timer_edit->addItem(new Action(timer_edit, F("Salva"), job_save));
+        timer_edit->addItem(new Action(timer_edit, F("Disabilita"), job_disable));
 
     sub = new Menu(root, F("Impostazioni"));
 
         sub->addItem(new NumericSelector(sub, F("Retroilluminazione"), state.backlight, 1, 10));
         sub->addItem(new NumericSelector(sub, F("Contrasto"), state.contrast, 1, 10));
 
+        sub->addItem(new Action(root, F("Ripristina memoria"), factory_wipe));    
+
         root->addItem(sub);
 
     menu = MenuController(root, &dr);
-
-    //Serial.println(free_ram());
 }
 
 void update_menu() {
@@ -84,15 +76,13 @@ void enter_menu() {
     menu.takeControl(root);
 
     menu.draw();
-
-    //Serial.println(free_ram());
 }
 
 // ############################################################################################
 
-void job_add(uint8_t i) {
+void job_add() {
     // For each job of the current receiver
-    for(i = 0; i < jobs_count; i++) {
+    for(byte i = 0; i < jobs_count; i++) {
         // If it's not enabled
         if (!get_job(i).enabled) {
             // Select it
@@ -112,7 +102,7 @@ void job_selected(uint8_t index) {
     menu.takeControl(timer_edit);
 }
 
-void job_save(uint8_t ignore) {
+void job_save() {
     save_job(job_ind, job_copy);
 
     // TODO: disable "Aggiungi" item if all jobs are enabled
@@ -120,8 +110,22 @@ void job_save(uint8_t ignore) {
     menu.back();
 }
 
+void job_disable() {
+
+}
+
 void force_recv(uint8_t s) {
     selected_receiver.active = s;
+
+    state.menu_active = false;
+}
+void force_recv_on()  { force_recv(true);  }
+void force_recv_off() { force_recv(false); }
+
+void factory_wipe() {
+    format_eeprom();
+
+    // TODO: restore other settings
 
     state.menu_active = false;
 }

@@ -9,11 +9,11 @@
 #include "structures.h"
 
 // Job name is generated on the fly, so I can use a global buffer to spare a LOT of RAM
-char job_name[15] = "ciao";
+char job_name[14];
 
-class JobEntry : public Action<uint8_t> {
+class JobEntry : public ParamAction<uint8_t> {
     public:
-        JobEntry(MenuItem* parent, ActionCallback callback, int index) : Action(parent, NULL, callback, index) {
+        JobEntry(MenuItem* parent, ActionCallback callback, int index) : ParamAction(parent, NULL, callback, index) {
             this->is_flash = 0;
         }
 
@@ -45,25 +45,20 @@ class TimeSelector : public MenuItem {
         char getTypeId() { return 'd'; };
 
         const char* getSecondaryText() {
-            sprintf(valueStr, "<%2d:%02d>", variable.s.h, variable.s.m);
+            sprintf_P(valueStr, PSTR("<%2d:%02d>"), variable.s.h, variable.s.m);
 
             return valueStr;
         }
 
-        int activate() {
+        bool activate() {
             oldValue = variable;
 
             // Select Hours first
             stage = 0;
 
-            return 1;
+            return true;
         }
-
-        int deactivate(){
-            variable = oldValue;
-
-            return 1;
-        }
+        void deactivate(){ variable = oldValue; }
 
         void doNext() {
             if (stage) {

@@ -1,6 +1,6 @@
 
 #define eeprom_job_address(recv, index) eeprom_jobs_start + eeprom_jobs_size * recv + sizeof(Interval) * index
-#define eeprom_job_string_address(recv, index) eeprom_strings_start + 15 * (jobs_count * recv + index)
+#define eeprom_job_string_address(recv, index) eeprom_strings_start + 14 * (jobs_count * recv + index)
 
 Interval get_recv_job(byte recv, byte index) {
     Interval job;
@@ -11,35 +11,33 @@ Interval get_recv_job(byte recv, byte index) {
 }
 
 void get_recv_job_string(byte recv, byte index, char* buff) {
-    for (byte i = 0; i < 15; i++) {
+    for (byte i = 0; i < 14; i++) {
         buff[i] = EEPROM.read(eeprom_job_string_address(recv, index) + i);
 
         //if (buff[i] == 0xFF) buff[i] = '0';
     }
 
-    buff[14] = 0x00;
+    buff[13] = 0x00;
 }
 
 void save_recv_job(byte recv, byte index, Interval job) {
     EEPROM.put(eeprom_job_address(recv, index), job);
 
     // Generate string
-    char job_name[15];
+    char job_name[14];
 
-    sprintf(job_name,
-        "%2d:%02d -> %2d:%02d",
+    sprintf_P(job_name,
+        PSTR("%2d:%02d \x1a %2d:%02d"),
         job.start.s.h, job.start.s.m,
         job.end.s.h,   job.end.s.m
     );
 
-    for (byte i = 0; i < 15; i++) {
+    for (byte i = 0; i < 14; i++) {
         EEPROM.update(eeprom_job_string_address(recv, index) + i, job_name[i]);
     }
 }
 
 void format_eeprom() {
-    Serial.println("Formatting eeprom");
-
     Interval empty_job;
 
     memset(&empty_job, 0, sizeof(Interval));

@@ -57,7 +57,14 @@ void setup() {
 
     init_buttons();
     init_lcd();
+
+    //int ram = free_ram();
+
     init_menu();
+
+    //Serial.print(F("before: ")); Serial.println(ram);
+    //Serial.print(F("after:  ")); Serial.println(free_ram());
+    //Serial.print(F("diff:   ")); Serial.println(ram - free_ram());
 }
 
 void loop() {
