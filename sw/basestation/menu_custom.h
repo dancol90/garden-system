@@ -23,19 +23,15 @@ class JobEntry : public ParamAction<uint8_t> {
             return job_name;
         }
 
-        //bool isEnabled() { return get_job(this->data).enabled; }
+        bool isEnabled() { return get_job(this->data).enabled; }
 };
 
 class TimeSelector : public MenuItem {
-    private:
-        Time& variable;
-        Time  oldValue;
-
-        uint8_t stage;
-    
-        char valueStr[10];
     public:
-        TimeSelector(MenuItem* parent, const __FlashStringHelper* text, Time& variable) : MenuItem(parent, text), variable(variable) {};
+        typedef void(*TimeSelectedCallback)(void);
+
+
+        TimeSelector(MenuItem* parent, const __FlashStringHelper* text, Time& variable, TimeSelectedCallback callback = NULL) : MenuItem(parent, text), variable(variable), callback(callback) {};
 
         Time getValue() { return variable; }
 
@@ -83,9 +79,22 @@ class TimeSelector : public MenuItem {
         MenuItem* action() {
             if (stage == 0)
                 stage++;
-            else
+            else {
+                if (this->callback) this->callback();
+
                 return this->getParent();
+            }
         }
+
+    private:
+        Time& variable;
+        Time  oldValue;
+
+        uint8_t stage;
+    
+        char valueStr[10];
+
+        TimeSelectedCallback callback;
 };
 
 class LcdDrawer : public NokiaLcdDrawer {

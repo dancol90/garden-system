@@ -37,15 +37,17 @@ void init_menu() {
         timer_edit->addItem(new TimeSelector(timer_edit, F("Accendi alle"), job_copy.start));
         timer_edit->addItem(new TimeSelector(timer_edit, F("Spegni alle"),  job_copy.end));
 
-        timer_edit->addItem(new Action(timer_edit, F("Salva"), job_save));
-        timer_edit->addItem(new Action(timer_edit, F("Disabilita"), job_disable));
+        timer_edit->addItem(new Action(timer_edit, F("Salva"),   job_save));
+        timer_edit->addItem(new Action(timer_edit, F("Elimina"), job_delete));
 
     sub = new Menu(root, F("Impostazioni"));
 
         sub->addItem(new NumericSelector(sub, F("Retroilluminazione"), settings.backlight, 1, 10, lcd_cb));
         sub->addItem(new NumericSelector(sub, F("Contrasto"),          settings.contrast,  1, 10, lcd_cb));
+        sub->addItem(new    TimeSelector(sub, F("Ora"),                now, time_cb));
 
-        sub->addItem(new Action(root, F("Ripristina memoria"), factory_wipe));    
+
+        sub->addItem(new          Action(sub, F("Ripristina memoria"), factory_wipe));    
 
         root->addItem(sub);
 
@@ -102,17 +104,23 @@ void job_selected(uint8_t index) {
     menu.takeControl(timer_edit);
 }
 
-void job_save() {
+void job_update() {
     save_job(job_ind, job_copy);
-
     // TODO: disable "Aggiungi" item if all jobs are enabled
-
     menu.back();
 }
 
-void job_disable() {
-
+void job_save() {
+    job_copy.enabled = true;
+    job_update();
 }
+
+void job_delete() {
+    memset(&job_copy, 0, sizeof(Interval));
+    job_update();
+}
+
+// ############################################################################################
 
 void force_recv(uint8_t s) {
     selected_receiver.active = s;
@@ -121,6 +129,20 @@ void force_recv(uint8_t s) {
 }
 void force_recv_on()  { force_recv(true);  }
 void force_recv_off() { force_recv(false); }
+
+// ############################################################################################
+
+// Update both contrast & backlight when one of them changes
+void lcd_cb(bool confirm) {
+    update_lcd();
+
+    if (confirm)
+        save_settings();
+}
+
+void time_cb() {
+    // Set RTC time here.
+}
 
 void factory_wipe() {
     format_eeprom();

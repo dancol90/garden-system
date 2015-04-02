@@ -34,3 +34,8 @@ void draw_big_digit(uint8_t xPos, uint8_t yPos, uint8_t digit) {
         }
     }
 }
+
+void update_lcd() {
+    analogWrite(LCD_LED, 25 * settings.backlight);
+    lcd.setContrast(40 + 3 * settings.contrast);
+}
