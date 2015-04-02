@@ -136,12 +136,21 @@ void force_recv_off() { force_recv(false); }
 void lcd_cb(bool confirm) {
     update_lcd();
 
-    if (confirm)
+    if (confirm) 
         save_settings();
 }
 
-void time_cb() {
-    // Set RTC time here.
+void time_cb(bool enter) {
+    if (enter) {
+        // The selector was just entered
+        // Stop updating the time while modifing it.
+        state.rtc_stop = true;
+    } else {
+        // Set RTC time here.
+        write_time(now);
+        
+        state.rtc_stop = false;
+    }
 }
 
 void factory_wipe() {

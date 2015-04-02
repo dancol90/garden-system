@@ -28,7 +28,7 @@ class JobEntry : public ParamAction<uint8_t> {
 
 class TimeSelector : public MenuItem {
     public:
-        typedef void(*TimeSelectedCallback)(void);
+        typedef void(*TimeSelectedCallback)(bool);
 
 
         TimeSelector(MenuItem* parent, const __FlashStringHelper* text, Time& variable, TimeSelectedCallback callback = NULL) : MenuItem(parent, text), variable(variable), callback(callback) {};
@@ -47,6 +47,8 @@ class TimeSelector : public MenuItem {
         }
 
         bool activate() {
+            if (this->callback) this->callback(true);
+
             oldValue = variable;
 
             // Select Hours first
@@ -80,7 +82,7 @@ class TimeSelector : public MenuItem {
             if (stage == 0)
                 stage++;
             else {
-                if (this->callback) this->callback();
+                if (this->callback) this->callback(false);
 
                 return this->getParent();
             }
