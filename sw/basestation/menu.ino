@@ -42,8 +42,8 @@ void init_menu() {
 
     sub = new Menu(root, F("Impostazioni"));
 
-        sub->addItem(new NumericSelector(sub, F("Retroilluminazione"), state.backlight, 1, 10));
-        sub->addItem(new NumericSelector(sub, F("Contrasto"), state.contrast, 1, 10));
+        sub->addItem(new NumericSelector(sub, F("Retroilluminazione"), settings.backlight, 1, 10, lcd_cb));
+        sub->addItem(new NumericSelector(sub, F("Contrasto"),          settings.contrast,  1, 10, lcd_cb));
 
         sub->addItem(new Action(root, F("Ripristina memoria"), factory_wipe));    
 

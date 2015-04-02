@@ -37,6 +37,9 @@ void save_recv_job(byte recv, byte index, Interval job) {
     }
 }
 
+void save_settings() { EEPROM.put(eeprom_settings_start, settings); }
+void load_settings() { EEPROM.get(eeprom_settings_start, settings); }
+
 void format_eeprom() {
     Interval empty_job;
 

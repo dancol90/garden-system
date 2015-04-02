@@ -29,6 +29,7 @@ RF24 radio(RF24_CE, RF24_CSN);
 
 Time now;
 ApplicationState state;
+Settings settings;
 
 ReceiverState receivers[RECEIVER_COUNT];
 
@@ -42,12 +43,13 @@ MenuController menu;
 void setup() {
     Serial.begin(9600);
 
-    memset(&state, 0, sizeof(ApplicationState));
-    
-    // Clear data
-    memset(&receivers, 0, sizeof(ReceiverState) * RECEIVER_COUNT);
-
     init_eeprom();
+
+    load_settings();
+
+    // Clear data
+    memset(&state,    0, sizeof(ApplicationState));
+    memset(&receivers, 0, sizeof(ReceiverState) * RECEIVER_COUNT);
 
     init_rtc();
 

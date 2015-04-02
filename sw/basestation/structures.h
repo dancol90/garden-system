@@ -34,19 +34,18 @@ struct ButtonState {
 
 
 struct ApplicationState {
-	uint8_t contrast;
-    uint8_t backlight;
-
-    uint8_t : 0;
-
     uint8_t selected_recv : 3;
     uint8_t menu_active : 1;
+};
+
+struct Settings {
+    uint8_t contrast;
+    uint8_t backlight;
 };
 
 
 struct ReceiverState {
     bool active : 1;
-
     //Interval jobs[5];
 };
 
