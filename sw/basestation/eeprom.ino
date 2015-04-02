@@ -61,6 +61,6 @@ void init_eeprom() {
 }
 
 
-Interval get_job(byte index)                { get_recv_job(state.selected_recv, index); }
+Interval get_job(byte index)                { return get_recv_job(state.selected_recv, index); }
 void get_job_string(byte index, char* buff) { get_recv_job_string(state.selected_recv, index, buff); }
 void save_job(byte index, Interval job)     { save_recv_job(state.selected_recv, index, job); }

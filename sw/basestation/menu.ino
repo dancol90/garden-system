@@ -8,6 +8,7 @@
 
 Menu* root = new Menu(NULL, NULL);
 Menu* timer_edit;
+MenuItem* add_entry;
 
 LcdDrawer dr = LcdDrawer(lcd);
 
@@ -28,7 +29,7 @@ void init_menu() {
         sub->addItem(new JobEntry(sub, job_selected, i));        
     }
 
-    sub->addItem(new Action(sub, F("Aggiungi"), job_add));
+    add_entry = sub->addItem(new Action(sub, F("Aggiungi"), job_add));
 
     root->addItem(sub);
     
@@ -106,7 +107,18 @@ void job_selected(uint8_t index) {
 
 void job_update() {
     save_job(job_ind, job_copy);
-    // TODO: disable "Aggiungi" item if all jobs are enabled
+
+    bool avail = false;
+
+    for (byte i = 0; i < jobs_count; i++) {
+        if (!get_job(i).enabled) {
+            avail = true;
+            break;
+        }
+    }
+
+    add_entry->setState(avail);
+
     menu.back();
 }
 

@@ -14,7 +14,7 @@ void read_time() {
 
     Wire.beginTransmission(0x68);
     // Skip seconds register and start from minutes
-    Wire.write(0x00);
+    Wire.write(0x01);
     Wire.endTransmission();
 
     Wire.requestFrom(0x68, 2);
@@ -25,9 +25,12 @@ void read_time() {
 
 void write_time(Time t) {
     Wire.beginTransmission(0x68);
-    // Skip seconds register and start from minutes
-    Wire.write(0x01);
+    // First register, seconds
+    Wire.write(0x00);
 
+    // Reset seconds
+    Wire.write(0);
+    // Write mins and hours
     Wire.write(bin2bcd(t.s.m));
     Wire.write(bin2bcd(t.s.h));
 
