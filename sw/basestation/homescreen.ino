@@ -8,6 +8,7 @@
 
 uint8_t rect_w = LCD_WIDTH / RECEIVER_COUNT;
 
+long w = 0;
 
 void draw_selector(int x, int y) {
     lcd.drawHLine(x    , y    , 5, BLACK);
@@ -28,7 +29,15 @@ void draw_homescreen() {
     draw_big_digit(16 + 3*font_w, 1, now.s.m % 10);
 
     lcd.setCursor(1, 26);
-    lcd.print(F("Next:"));
+    lcd.print(F("Next: "));
+
+    // Temporary solution. In near future this will change.
+    if(get_job(0).enabled) {
+        char next[14];
+        get_job_string(0, next);
+        
+        lcd.print(next);
+    }
 
     uint8_t offset = 0, char_x, c;
 
@@ -54,14 +63,24 @@ void draw_homescreen() {
 }
 
 void update_homescreen() {
+    bool changed = true;
+
     if (is_pressed(BTN_UP))
         state.selected_recv = (state.selected_recv == 0) ? (RECEIVER_COUNT - 1) : (state.selected_recv - 1);
     else if (is_pressed(BTN_DOWN))
         state.selected_recv = (state.selected_recv + 1) % RECEIVER_COUNT;
     else if (is_pressed(BTN_OK))
         enter_menu();
+    else
+        changed = false;
 
-    if (!state.menu_active)
+    if (millis() - w > 300) {
+        changed = true;
+
+        w = millis();
+    }
+
+    if (changed && !state.menu_active)
         // Draw homescreen
         draw_homescreen();
 }
