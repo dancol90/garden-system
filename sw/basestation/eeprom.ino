@@ -20,8 +20,6 @@ Interval get_recv_job(byte recv, byte index) {
 void get_recv_job_string(byte recv, byte index, char* buff) {
     for (byte i = 0; i < 14; i++) {
         buff[i] = EEPROM.read(eeprom_job_string_address(recv, index) + i);
-
-        //if (buff[i] == 0xFF) buff[i] = '0';
     }
 
     buff[13] = 0x00;

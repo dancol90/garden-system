@@ -9,18 +9,22 @@
 static uint8_t bcd2bin (uint8_t val) { return val - 6 * (val >> 4); }
 static uint8_t bin2bcd (uint8_t val) { return val + 6 * (val / 10); }
 
+uint8_t last_minute = 0;
+
 void read_time() {
     if (state.rtc_stop) return;
 
     Wire.beginTransmission(0x68);
-    Wire.write(0x00);
+    Wire.write(0x01);
     Wire.endTransmission();
 
     Wire.requestFrom(0x68, 2);
 
-    state.new_minute = (!state.new_minute && Wire.read() == 0);
     now.s.m = bcd2bin(Wire.read());
     now.s.h = bcd2bin(Wire.read());
+
+    state.new_minute = (last_minute != now.s.m);
+    last_minute = now.s.m;
 }
 
 void write_time(Time t) {
