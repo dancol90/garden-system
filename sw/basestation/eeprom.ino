@@ -1,3 +1,10 @@
+/*############################################################################################
+ Garden System
+ Wireless controller for watering electropumps
+
+ Author: Daniele Colanardi
+ License: BSD, see LICENSE file
+############################################################################################*/
 
 #define eeprom_job_address(recv, index) eeprom_jobs_start + eeprom_jobs_size * recv + sizeof(Interval) * index
 #define eeprom_job_string_address(recv, index) eeprom_strings_start + 14 * (jobs_count * recv + index)
