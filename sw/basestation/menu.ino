@@ -35,10 +35,9 @@ void init_menu() {
     
     timer_edit = new Menu(sub, F("Edit"));
 
-        timer_edit->addItem(new TimeSelector(timer_edit, F("Accendi alle"), job_copy.start));
-        timer_edit->addItem(new TimeSelector(timer_edit, F("Spegni alle"),  job_copy.end));
+        timer_edit->addItem(new TimeSelector(timer_edit, F("Accendi alle"), job_copy.start, job_changed));
+        timer_edit->addItem(new TimeSelector(timer_edit, F("Spegni alle"),  job_copy.end,   job_changed));
 
-        timer_edit->addItem(new Action(timer_edit, F("Salva"),   job_save));
         timer_edit->addItem(new Action(timer_edit, F("Elimina"), job_delete));
 
     sub = new Menu(root, F("Impostazioni"));
@@ -106,8 +105,10 @@ void job_selected(uint8_t index) {
 }
 
 void job_update() {
+    // Write to EEPROM
     save_job(job_ind, job_copy);
 
+    // Update "Add job" menu entry to reflect available space
     bool avail = false;
 
     for (byte i = 0; i < jobs_count; i++) {
@@ -118,18 +119,27 @@ void job_update() {
     }
 
     add_entry->setState(avail);
-
-    menu.back();
 }
 
-void job_save() {
-    job_copy.enabled = true;
-    job_update();
+/*
+    Called when either start or stop time of a job changes.
+    It does some validation, so that a start time that comes later than the end time
+    is not accepted and saved.
+
+    TODO: manage 0:00 rollover
+*/
+void job_changed(bool enter) {
+    // Update on exit
+    if (!enter && job_copy.start.minutes < job_copy.end.minutes) {
+        job_copy.enabled = true;
+        job_update();
+    }
 }
 
 void job_delete() {
     memset(&job_copy, 0, sizeof(Interval));
     job_update();
+    menu.back();
 }
 
 // ############################################################################################
