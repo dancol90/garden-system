@@ -74,6 +74,9 @@ void loop() {
     // Update time
     read_time();
 
+    if (state.new_minute)
+        update_schedule();
+
     // Update button states
     update_buttons();
 
@@ -86,32 +89,3 @@ void loop() {
 
     delay(50);
 }
-
-/*void print_jobs() {
-    for (byte a = 0; a < RECEIVER_COUNT; a++) {
-        Serial.print(F("Receiver ")); Serial.print(a);
-        if (receivers[a].active) Serial.print(F("[active]"));
-        Serial.println(); 
-
-        for (byte i = 0; i < 10; i++) {
-            Serial.print(i); Serial.print(" - ");
-            print_job(receivers[a].jobs[i]);
-            Serial.println();
-        }
-
-        Serial.println(F("-------------------"));
-    }
-}
-
-
-void print_job(Interval& t) {
-    print_time(t.start);
-    Serial.print(F(" -> "));
-    print_time(t.end);    
-}
-
-void print_time(Time& t) {
-    Serial.print(t.s.h);Serial.print(':');Serial.print(t.s.m);
-   
-}
-*/

@@ -13,12 +13,12 @@ void read_time() {
     if (state.rtc_stop) return;
 
     Wire.beginTransmission(0x68);
-    // Skip seconds register and start from minutes
-    Wire.write(0x01);
+    Wire.write(0x00);
     Wire.endTransmission();
 
     Wire.requestFrom(0x68, 2);
 
+    state.new_minute = (!state.new_minute && Wire.read() == 0);
     now.s.m = bcd2bin(Wire.read());
     now.s.h = bcd2bin(Wire.read());
 }

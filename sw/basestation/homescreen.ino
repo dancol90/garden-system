@@ -31,10 +31,9 @@ void draw_homescreen() {
     lcd.setCursor(1, 26);
     lcd.print(F("Next: "));
 
-    // Temporary solution. In near future this will change.
-    if(get_job(0).enabled) {
+    if(selected_receiver.next_job >= 0) {
         char next[14];
-        get_job_string(0, next);
+        get_job_string(selected_receiver.next_job, next);
         
         lcd.print(next);
     }

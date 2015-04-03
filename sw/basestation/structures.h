@@ -35,8 +35,10 @@ struct ButtonState {
 
 struct ApplicationState {
     uint8_t selected_recv : 3; // The index of the selected receiver
-    uint8_t menu_active : 1;   // Indicates if the menu is being shown or not
-    uint8_t rtc_stop : 1;      // Whether prevent reading from rtc or not
+    bool menu_active : 1;      // Indicates if the menu is being shown or not
+    bool rtc_stop : 1;         // Whether prevent reading from rtc or not
+
+    bool new_minute : 1;
 };
 
 struct Settings {
@@ -47,7 +49,11 @@ struct Settings {
 
 struct ReceiverState {
     bool active : 1;
-    //Interval jobs[5];
+
+    byte :0;
+
+    int8_t current_job : 4;
+    int8_t next_job : 4;
 };
 
 #endif
