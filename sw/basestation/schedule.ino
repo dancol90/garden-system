@@ -51,4 +51,6 @@ void update_schedule() {
         // (that's the first of tomorrow) or -1 id nothing is found
         receivers[r].next_job = next_index >= 0 ? next_index : min_index;
     }
+
+    state.force_schedule_update = false;
 }

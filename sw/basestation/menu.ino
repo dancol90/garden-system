@@ -42,8 +42,8 @@ void init_menu() {
 
     sub = new Menu(root, F("Impostazioni"));
 
-        sub->addItem(new NumericSelector(sub, F("Retroilluminazione"), settings.backlight, 1, 10, lcd_cb));
-        sub->addItem(new NumericSelector(sub, F("Contrasto"),          settings.contrast,  1, 10, lcd_cb));
+        sub->addItem(new NumericSelector(sub, F("Retroilluminazione"), settings.backlight, 1, 20, lcd_cb));
+        sub->addItem(new NumericSelector(sub, F("Contrasto"),          settings.contrast,  1, 20, lcd_cb));
         sub->addItem(new    TimeSelector(sub, F("Ora"),                now, time_cb));
 
 
@@ -119,6 +119,8 @@ void job_update() {
     }
 
     add_entry->setState(avail);
+
+    state.force_schedule_update = true;
 }
 
 /*

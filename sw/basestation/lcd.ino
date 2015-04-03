@@ -11,9 +11,8 @@ void init_lcd() {
     pinMode(LCD_LED, OUTPUT);
     
     lcd.begin();
-    lcd.setContrast(50);
-    // Turn on backlight
-    analogWrite(LCD_LED, 200);
+
+    update_lcd();
 }
 
 void draw_big_digit(uint8_t xPos, uint8_t yPos, uint8_t digit) {
@@ -36,6 +35,6 @@ void draw_big_digit(uint8_t xPos, uint8_t yPos, uint8_t digit) {
 }
 
 void update_lcd() {
-    analogWrite(LCD_LED, 25 * settings.backlight);
-    lcd.setContrast(40 + 3 * settings.contrast);
+    analogWrite(LCD_LED, 12 * settings.backlight);
+    lcd.setContrast(40 + settings.contrast);
 }

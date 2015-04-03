@@ -39,6 +39,7 @@ struct ApplicationState {
     bool rtc_stop : 1;         // Whether prevent reading from rtc or not
 
     bool new_minute : 1;
+    bool force_schedule_update : 1;
 };
 
 struct Settings {
@@ -53,7 +54,7 @@ struct ReceiverState {
     byte :0;
 
     int8_t current_job : 4;
-    int8_t next_job : 4;
+    int8_t    next_job : 4;
 };
 
 #endif

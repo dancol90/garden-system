@@ -29,13 +29,17 @@ void draw_homescreen() {
     draw_big_digit(16 + 3*font_w, 1, now.s.m % 10);
 
     lcd.setCursor(1, 26);
-    lcd.print(F("Next: "));
-
-    if(selected_receiver.next_job >= 0) {
-        char next[14];
-        get_job_string(selected_receiver.next_job, next);
+    
+    if (selected_receiver.current_job >= 0) {
+        get_job_string(selected_receiver.current_job, job_name);
         
-        lcd.print(next);
+        lcd.print(F("Now:  "));
+        lcd.print(job_name);        
+    } else if (selected_receiver.next_job >= 0) {
+        get_job_string(selected_receiver.next_job, job_name);
+        
+        lcd.print(F("Next: "));
+        lcd.print(job_name);
     }
 
     uint8_t offset = 0, char_x, c;

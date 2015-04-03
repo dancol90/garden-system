@@ -74,7 +74,7 @@ void loop() {
     // Update time
     read_time();
 
-    if (state.new_minute)
+    if (state.new_minute || state.force_schedule_update)
         update_schedule();
 
     // Update button states
