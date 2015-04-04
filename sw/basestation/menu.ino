@@ -158,7 +158,7 @@ void force_recv_off() { force_recv(false); }
 
 // Update both contrast & backlight when one of them changes
 void lcd_cb(bool confirm) {
-    update_lcd();
+    state.lcd_settings_dirty = true;
 
     if (confirm) 
         save_settings();

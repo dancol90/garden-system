@@ -74,11 +74,14 @@ void loop() {
     // Update time
     read_time();
 
-    if (state.new_minute || state.force_schedule_update)
+    if (state.new_minute || state.force_schedule_update) {
         update_schedule();
+    }
 
     // Update button states
-    update_buttons();
+    if (update_buttons()) {
+        start_backlight_timer();
+    }
 
     if (state.menu_active) {
         update_menu();
@@ -86,6 +89,8 @@ void loop() {
         // Update homescreen state
         update_homescreen();
     }
+
+    update_lcd();
 
     delay(50);
 }

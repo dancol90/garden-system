@@ -16,7 +16,9 @@ void init_buttons() {
     }
 }
 
-void update_buttons() {
+bool update_buttons() {
+    bool button_pressed = false;
+
     for (int i = 0; i < 4; i++) {
         // Reset state
         buttons[i].changed = false;
@@ -30,9 +32,13 @@ void update_buttons() {
             if (buttons[i].state != r) {
                 buttons[i].state = r;
                 buttons[i].changed = true;
+
+                button_pressed = true;
             }
         }
     }
+
+    return button_pressed;
 }
 
 bool is_pressed(uint8_t i) { return buttons[i].changed &&  buttons[i].state; }

@@ -40,6 +40,7 @@ struct ApplicationState {
 
     bool new_minute : 1;
     bool force_schedule_update : 1;
+    bool lcd_settings_dirty : 1;
 };
 
 struct Settings {
