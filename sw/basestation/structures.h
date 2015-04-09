@@ -58,4 +58,10 @@ struct ReceiverState {
     int8_t    next_job : 4;
 };
 
+struct Packet {
+    uint8_t command;
+    uint8_t id;
+    uint8_t state;
+};
+
 #endif

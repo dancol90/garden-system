@@ -42,7 +42,10 @@ void update_schedule() {
                 }
                 
                 if (job.start.minutes <= now.minutes && now.minutes < job.end.minutes) {
+                    receivers[r].active = true;
                     receivers[r].current_job = i;
+                } else {
+                    receivers[r].active = false;
                 }
             }
         }

@@ -25,8 +25,6 @@
 
 // ############################################################################################
 
-RF24 radio(RF24_CE, RF24_CSN);
-
 Time now;
 ApplicationState state;
 Settings settings;
@@ -77,6 +75,8 @@ void loop() {
     if (state.new_minute || state.force_schedule_update) {
         update_schedule();
     }
+
+    update_rf();
 
     // Update button states
     if (update_buttons()) {

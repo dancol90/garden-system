@@ -13,9 +13,18 @@
 #define RF24_CE      10
 #define RF24_CSN     A0
 
-#define RF24_PAYLOAD 8
-#define RF24_PIPE    0xF0F0F0F0E1LL
+#define RECEIVER_ID  0x01
 
+#define RF24_PAYLOAD sizeof(Packet)
+#define RF24_PIPE    0xF0F0F0F000LL | RECEIVER_ID
+
+
+// -----------------------------------------
+struct Packet {
+    uint8_t command;
+    uint8_t id;
+    uint8_t state;
+} packet;
 // -----------------------------------------
 
 void goToSleep(uint8_t timeout = 0xFF);
@@ -23,12 +32,6 @@ void goToSleep(uint8_t timeout = 0xFF);
 // -----------------------------------------
 
 RF24 radio(RF24_CE, RF24_CSN);
-
-const uint64_t in_pipe  = 0xF0F0F0F0E1LL;
-const uint64_t out_pipe = 0xF0F0F0F0D2LL;
-
-const byte request[2] = {0x00, 0xFA};
-byte packet[8];
 
 bool timeout, rx, tx, fail;
 
@@ -88,8 +91,12 @@ void loop(void) {
   // Reset flags
   tx = false; fail = false;
 
+  packet.command = 0xF5;
+  packet.id = RECEIVER_ID;
+  packet.state = true;
+
   // Send status request to base. This command power up the radio
-  radio.startWrite(request, 2);
+  radio.startWrite(&packet, RF24_PAYLOAD);
   
   goToSleep();
 
@@ -109,7 +116,7 @@ void loop(void) {
       // We got something
 
       // Read it
-      radio.read(packet, RF24_PAYLOAD);
+      radio.read(&packet, RF24_PAYLOAD);
 
       /*Serial.print("-> Got ");
 
