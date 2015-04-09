@@ -118,12 +118,13 @@ void loop(void) {
       // Read it
       radio.read(&packet, RF24_PAYLOAD);
 
-      /*Serial.print("-> Got ");
+      Serial.println("--> Got ");
 
       for(int i = 0; i < RF24_PAYLOAD; i++) {
-        Serial.print(packet[i], HEX); Serial.print(" ");
+        Serial.println(packet.command, HEX);
+        Serial.println(packet.id, HEX);
+        Serial.println(packet.state, HEX);
       }
-      Serial.println();*/
 
       // TODO: do something here
       delay(50);
