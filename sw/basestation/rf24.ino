@@ -6,6 +6,14 @@
  License: BSD, see LICENSE file
 ############################################################################################*/
 
+class MyRF24 : public RF24 {
+    public:
+          MyRF24(uint8_t _cepin, uint8_t _cspin) : RF24(_cepin, _cspin) {}
+
+          uint8_t flush_rx(void) { RF24::flush_rx(); };
+          uint8_t flush_tx(void) { RF24::flush_tx(); };
+};
+
 /*
     ATTENTION!! This definition is just temporary.
     When everything will work, it will be moved to eeprom.ino 
@@ -16,8 +24,7 @@
 */
 #define get_recv_id(i) (i + 1)
 
-RF24 radio(RF24_CE, RF24_CSN);
-Packet packet;
+MyRF24 radio(RF24_CE, RF24_CSN);
 
 void init_rf() {
     radio.begin();
@@ -33,41 +40,42 @@ void init_rf() {
     // Low speed to increase signal range
     radio.setDataRate(RF24_250KBPS);
 
+    radio.enableAckPayload();
+
     // Open a pipe
     for (byte i = 0; i < RECEIVER_COUNT; i++) {
         radio.openReadingPipe(i, RF24_BASE_PIPE | get_recv_id(i));
     }
 
     radio.startListening();
+
+    write_tx_fifo();
 }
 
 void update_rf() {
     uint8_t recv_index;
 
-    if (radio.available(&recv_index)) {
-        // Fetch the payload
-        radio.read(&packet, RF24_PAYLOAD);
+    if (radio.available()) {
+        radio.flush_rx();
 
-        radio.stopListening();
+        write_tx_fifo();
+    }
+}
 
-        // Check if it's an expected pipe
-        // This should not be necessary, but it's an extra care.
-        if (recv_index >= RECEIVER_COUNT) 
-            return;
+void write_tx_fifo() {
+    Packet packet;
 
-        // Validate the packet
-        if (get_recv_id(recv_index) != packet.id)
-            return;
+    radio.flush_tx();
 
+    for (byte i = 0; i < RECEIVER_COUNT; i++) {
         // Response packet
         packet.command = 0xF0;
-        // The receiver ID remains the same.
+
+        packet.id = get_recv_id(i);
+
         // Send the state of the requesting receiver
-        packet.state = receivers[recv_index].active;
+        packet.state = receivers[i].active;
 
-        radio.openWritingPipe(RF24_BASE_PIPE | packet.id);
-        radio.write(&packet, sizeof(Packet));
-
-        radio.startListening();
+        radio.writeAckPayload(i, &packet, sizeof(Packet));
     }
 }

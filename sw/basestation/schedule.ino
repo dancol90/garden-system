@@ -41,11 +41,15 @@ void update_schedule() {
                         next_index = i;
                 }
                 
-                if (job.start.minutes <= now.minutes && now.minutes < job.end.minutes) {
-                    receivers[r].active = true;
+                bool condition = job.start.minutes <= now.minutes && now.minutes < job.end.minutes;
+
+                if (condition) {
                     receivers[r].current_job = i;
-                } else {
-                    receivers[r].active = false;
+                }
+
+                if (receivers[r].active != condition) {
+                    write_tx_fifo();
+                    receivers[r].active = condition;
                 }
             }
         }
