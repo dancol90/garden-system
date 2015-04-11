@@ -33,7 +33,7 @@ void goToSleep(uint8_t timeout = 0xFF);
 
 RF24 radio(RF24_CE, RF24_CSN);
 
-bool timeout, rx, tx, fail;
+bool timeout, rx_ack, tx, fail;
 
 void setup(void) {
   // Serial.begin(9600);
@@ -45,7 +45,7 @@ void setup(void) {
   power_timer1_disable();
   power_timer2_disable();
   power_twi_disable();
-  //power_usart0_disable();
+  power_usart0_disable();
   
   // Set sleep tothe most power-saving mode.
   set_sleep_mode(SLEEP_MODE_PWR_DOWN);
@@ -96,40 +96,21 @@ void loop(void) {
   packet.state = true;
 
   // Reset flags
-  tx = false; fail = false;
+  rx_ack = false;
   // Send status request to base. This command power up the radio
   radio.startWrite(&packet, RF24_PAYLOAD);
   
   // Sleeps the AVR while the radio does its things
   goToSleep();
 
-  if(tx && radio.isAckPayloadAvailable()) { 
+  if(rx_ack) { 
     // Transmission was successful, we have a reply in ack payload
       
     // Read it
     radio.read(&packet, RF24_PAYLOAD);
 
-    /*Serial.println("--> Got ");
-
-    for(int i = 0; i < RF24_PAYLOAD; i++) {
-      Serial.println(packet.command, HEX);
-      Serial.println(packet.id, HEX);
-      Serial.println(packet.state, HEX);
-    }*/
-
-    digitalWrite(MOTOR_1, LOW);
-    digitalWrite(MOTOR_2, HIGH);
-    delay(100);
-    digitalWrite(MOTOR_2, LOW);
-
     // TODO: do something here
-    //delay(50);
-  } else {
-    digitalWrite(MOTOR_1, HIGH);
-    digitalWrite(MOTOR_2, LOW);
-    delay(100);
-    digitalWrite(MOTOR_1, LOW);
-
+    delay(50);
   }
   
   // It's done. Now, rest.
@@ -140,31 +121,28 @@ void checkRadio(void) {
   // Disable wdt.
   wdt_disable();
 
+  tx = false;
+  fail = false;
+
   // What happened?
-  radio.whatHappened(tx, fail, rx);
+  radio.whatHappened(tx, fail, rx_ack);
 
   if(tx || fail)
     radio.powerDown();
 }
 
-
 void goToSleep(uint8_t timeout) {
-  if(timeout != 0xFF) {
-    // Enable register changes
-    WDTCSR |= (1<<WDCE) | (1<<WDE);
-    // Enable Interrupt mode, 1s timeout
-    WDTCSR = (1<<WDIE) | timeout; 
-  }
-
-  // Go to sleep
+  wdt_enable(timeout);
+  wdt_reset();
+  WDTCSR |= _BV(WDIE);
+  
   sleep_mode();
+  wdt_disable();
+  WDTCSR &= ~_BV(WDIE);
 }
 
-ISR(WDT_vect) {
-  cli();
-
-  // Disable wdt.
+SIGNAL(WDT_vect) {
   wdt_disable();
-  
-  sei();
+  wdt_reset();
+  WDTCSR &= ~_BV(WDIE);
 }
