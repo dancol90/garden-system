@@ -33,10 +33,10 @@ void goToSleep(uint8_t timeout = 0xFF);
 
 RF24 radio(RF24_CE, RF24_CSN);
 
-bool timeout, rx, tx, fail;
+bool timeout, rx_ack, tx, fail;
 
 void setup(void) {
-  //Serial.begin(115200);
+  // Serial.begin(9600);
 
   // Turn down unneeded peripherals
   ADCSRA = 0;
@@ -68,6 +68,8 @@ void setup(void) {
   // NOTE: this command will also open a reading pipe at index 0 for auto ack
   //       but is usable to receive data too.
   radio.openWritingPipe(RF24_PIPE);
+
+  radio.enableAckPayload();
   
   // Power down nrf24
   radio.powerDown();
@@ -80,7 +82,7 @@ void setup(void) {
   pinMode(MOTOR_2, OUTPUT);
 }
 
-void loop(void) { 
+void loop(void) {
   // Replace this with Arduino sleep + WDT timeout
   goToSleep(WDTO_8S);
 
@@ -88,56 +90,28 @@ void loop(void) {
   // Wait until radio is fully awake
   delay(50);
 
-  // Reset flags
-  tx = false; fail = false;
-
+  // Populate packet
   packet.command = 0xF5;
   packet.id = RECEIVER_ID;
   packet.state = true;
 
+  // Reset flags
+  rx_ack = false;
   // Send status request to base. This command power up the radio
   radio.startWrite(&packet, RF24_PAYLOAD);
   
+  // Sleeps the AVR while the radio does its things
   goToSleep();
 
-  if(tx) { 
-    // Transmission was successful, now wait a reply
+  if(rx_ack) { 
+    // Transmission was successful, we have a reply in ack payload
+      
+    // Read it
+    radio.read(&packet, RF24_PAYLOAD);
 
-    // Put nrf24 in receive mode
-    radio.startListening();
-
-    // Reset flags
-    rx = false; fail = false;
-
-    // Wait for nrf24 to do its magic
-    goToSleep(WDTO_60MS);
-
-    if(rx) {
-      // We got something
-
-      // Read it
-      radio.read(&packet, RF24_PAYLOAD);
-
-      Serial.println("--> Got ");
-
-      for(int i = 0; i < RF24_PAYLOAD; i++) {
-        Serial.println(packet.command, HEX);
-        Serial.println(packet.id, HEX);
-        Serial.println(packet.state, HEX);
-      }
-
-      // TODO: do something here
-      delay(50);
-    } /* else {
-      // RX timed out. Restart from scratch.
-      Serial.println(" -> Rx timeout");  
-    } */
-
-    radio.stopListening();
-
-  } /* else {
-    Serial.println(" -> Tx Error");
-  }*/
+    // TODO: do something here
+    delay(50);
+  }
   
   // It's done. Now, rest.
   radio.powerDown();
@@ -147,31 +121,28 @@ void checkRadio(void) {
   // Disable wdt.
   wdt_disable();
 
+  tx = false;
+  fail = false;
+
   // What happened?
-  radio.whatHappened(tx,fail,rx);
+  radio.whatHappened(tx, fail, rx_ack);
 
   if(tx || fail)
     radio.powerDown();
 }
 
-
 void goToSleep(uint8_t timeout) {
-  if(timeout != 0xFF) {
-    // Enable register changes
-    WDTCSR |= (1<<WDCE) | (1<<WDE);
-    // Enable Interrupt mode, 1s timeout
-    WDTCSR = (1<<WDIE) | timeout; 
-  }
-
-  // Go to sleep
+  wdt_enable(timeout);
+  wdt_reset();
+  WDTCSR |= _BV(WDIE);
+  
   sleep_mode();
+  wdt_disable();
+  WDTCSR &= ~_BV(WDIE);
 }
 
-ISR(WDT_vect) {
-  cli();
- 
-  // Disable wdt.
+SIGNAL(WDT_vect) {
   wdt_disable();
-  
-  sei();
+  wdt_reset();
+  WDTCSR &= ~_BV(WDIE);
 }

@@ -151,6 +151,8 @@ void force_recv(uint8_t s) {
     selected_receiver.forced = true;
 
     state.menu_active = false;
+
+    write_tx_fifo();
 }
 void force_recv_on()  { force_recv(true);  }
 void force_recv_off() { force_recv(false); }

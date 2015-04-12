@@ -37,20 +37,21 @@ void update_schedule() {
                     min_value = job.start.minutes;
                     min_index = i;
                 }
-                
+
                 // If this job is later today, it's what we are searching for.
                 if (job.start.minutes < next_value && job.start.minutes >= now.minutes) {
                     next_value = job.start.minutes;
-                    next_index = i;
+                        next_index = i;
                     Serial.println(next_index);
                 }
-
+                
                 bool condition = job.start.minutes <= now.minutes && now.minutes < job.end.minutes;
 
                 if (receivers[r].active != condition) {
                     // Change the state only if is not forced by the user
                     if (!receivers[r].forced) {
                         receivers[r].active = condition;
+                        write_tx_fifo();
                     }
                 } else {
                     // Keep the forced state until it matches the scheduled one.
