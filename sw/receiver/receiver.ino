@@ -27,7 +27,6 @@ struct Packet {
 } packet;
 
 RF24 radio(RF24_CE, RF24_CSN);
-
 bool current_state, rx_ack, tx, fail;
 
 // -----------------------------------------
@@ -37,11 +36,10 @@ void goToSleep(uint8_t timeout = 0xFF);
 // -----------------------------------------
 
 void setup(void) {
-  // Serial.begin(9600);
-
   // Turn down unneeded peripherals
   ADCSRA = 0;
   power_adc_disable();
+  // Can't turn off Timer0 because RF24 lib uses delay()
   //power_timer0_disable();
   power_timer1_disable();
   power_timer2_disable();
@@ -88,12 +86,13 @@ void setup(void) {
 }
 
 void loop(void) {
+  // Radio must be awake to send data.
   radio.powerUp();
 
-  // Populate packet
+  // Populate request packet with current information.
   packet.command = 0xF5;
-  packet.id = RECEIVER_ID;
-  packet.state = true;
+  packet.id      = RECEIVER_ID;
+  packet.state   = true;
 
   // Reset flags
   rx_ack = false;
@@ -103,6 +102,8 @@ void loop(void) {
   // Sleeps the AVR while the radio does its things
   goToSleep();
 
+  // If base and receiver talked as they should, there must be a packet ready to be read.
+  // Don't care if write() wasn't successful or basestation didn't responded, just check if there's some data.
   if(rx_ack) { 
     // Transmission was successful, we have a reply in ack payload
       
@@ -111,12 +112,16 @@ void loop(void) {
 
     // TODO: validate packet
     
+    // Debug LED flashing
     setSolenoidState(true);  goToSleep(WDTO_60MS);
     setSolenoidState(false); goToSleep(WDTO_120MS);
 
+    // If basestation says that the state changed, then change it.
     if (packet.state != current_state) {
+      // Change the state only the first time
       current_state = packet.state;
 
+      // Actuate the state change
       setSolenoidState(packet.state);
     }
   }
@@ -124,25 +129,15 @@ void loop(void) {
   // It's done. Now, rest.
   radio.powerDown();
 
+  // Make the mcu sleep for about 8 seconds.
   goToSleep(WDTO_8S);
 }
 
 // -----------------------------------------
 
-void checkRadio(void) {
-  // Disable wdt.
-  wdt_disable();
-
-  tx = false;
-  fail = false;
-
-  // What happened?
-  radio.whatHappened(tx, fail, rx_ack);
-
-  if(tx || fail)
-    radio.powerDown();
-}
-
+/**
+  
+*/
 void goToSleep(uint8_t timeout) {
   // If a timeout is specified, set the watchdog accordingly
   if (timeout != 0xFF) {
@@ -162,14 +157,8 @@ void goToSleep(uint8_t timeout) {
   WDTCSR &= ~_BV(WDIE);
 }
 
-SIGNAL(WDT_vect) {
-  wdt_disable();
-  wdt_reset();
-  WDTCSR &= ~_BV(WDIE);
-}
-
-// -----------------------------------------
-
+/**
+*/
 void setSolenoidState(bool open) {
   digitalWrite(MOTOR_1, !open); // LOW if open
   digitalWrite(MOTOR_2,  open); // HIGH if open
@@ -178,4 +167,36 @@ void setSolenoidState(bool open) {
 
   digitalWrite(MOTOR_1, LOW);
   digitalWrite(MOTOR_2, LOW);
+}
+
+// -----------------------------------------
+
+/**
+  Interrupt handler for radio events.
+  This is called everytime radio signal an event through IRQ pin.
+*/
+void checkRadio(void) {
+  // Disable current timer.
+  wdt_disable();
+
+  // Reset some flag.
+  tx = false;
+  fail = false;
+
+  // Check what happened in radio operations
+  radio.whatHappened(tx, fail, rx_ack);
+
+  // If the operations succeded, then shut the radio down.
+  if(tx || fail)
+    radio.powerDown();
+}
+
+/**
+  Interrupt handler for WDT events.
+  These are the first instructions that the mcu executes after waking up.
+*/
+SIGNAL(WDT_vect) {
+  wdt_disable();
+  wdt_reset();
+  WDTCSR &= ~_BV(WDIE);
 }
