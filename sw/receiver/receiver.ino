@@ -18,22 +18,23 @@
 #define RF24_PAYLOAD sizeof(Packet)
 #define RF24_PIPE    0xF0F0F0F000LL | RECEIVER_ID
 
-
 // -----------------------------------------
+
 struct Packet {
     uint8_t command;
     uint8_t id;
     uint8_t state;
 } packet;
+
+RF24 radio(RF24_CE, RF24_CSN);
+
+bool current_state, rx_ack, tx, fail;
+
 // -----------------------------------------
 
 void goToSleep(uint8_t timeout = 0xFF);
 
 // -----------------------------------------
-
-RF24 radio(RF24_CE, RF24_CSN);
-
-bool timeout, rx_ack, tx, fail;
 
 void setup(void) {
   // Serial.begin(9600);
@@ -80,15 +81,14 @@ void setup(void) {
   // Init motor pins
   pinMode(MOTOR_1, OUTPUT);
   pinMode(MOTOR_2, OUTPUT);
+
+  // Inital state is OFF
+  current_state = false;
+  setSolenoidState(false);
 }
 
 void loop(void) {
-  // Replace this with Arduino sleep + WDT timeout
-  goToSleep(WDTO_8S);
-
   radio.powerUp();
-  // Wait until radio is fully awake
-  delay(50);
 
   // Populate packet
   packet.command = 0xF5;
@@ -109,13 +109,25 @@ void loop(void) {
     // Read it
     radio.read(&packet, RF24_PAYLOAD);
 
-    // TODO: do something here
-    delay(50);
+    // TODO: validate packet
+    
+    setSolenoidState(true);  goToSleep(WDTO_60MS);
+    setSolenoidState(false); goToSleep(WDTO_120MS);
+
+    if (packet.state != current_state) {
+      current_state = packet.state;
+
+      setSolenoidState(packet.state);
+    }
   }
   
   // It's done. Now, rest.
   radio.powerDown();
+
+  goToSleep(WDTO_8S);
 }
+
+// -----------------------------------------
 
 void checkRadio(void) {
   // Disable wdt.
@@ -132,12 +144,21 @@ void checkRadio(void) {
 }
 
 void goToSleep(uint8_t timeout) {
-  wdt_enable(timeout);
-  wdt_reset();
-  WDTCSR |= _BV(WDIE);
+  // If a timeout is specified, set the watchdog accordingly
+  if (timeout != 0xFF) {
+    wdt_enable(timeout);
+    // Reset the watchdog.
+    wdt_reset();
+    // Enable the wdt interrupt to wake up the mcu
+    WDTCSR |= _BV(WDIE);
+  }
   
+  // Actually sleep
   sleep_mode();
+
+  // The mcu is awake, disable the wdt (also in case of no timeout)
   wdt_disable();
+  // Disable the wdt interrupt, just to be sure.
   WDTCSR &= ~_BV(WDIE);
 }
 
@@ -145,4 +166,16 @@ SIGNAL(WDT_vect) {
   wdt_disable();
   wdt_reset();
   WDTCSR &= ~_BV(WDIE);
+}
+
+// -----------------------------------------
+
+void setSolenoidState(bool open) {
+  digitalWrite(MOTOR_1, !open); // LOW if open
+  digitalWrite(MOTOR_2,  open); // HIGH if open
+
+  goToSleep(WDTO_120MS);
+
+  digitalWrite(MOTOR_1, LOW);
+  digitalWrite(MOTOR_2, LOW);
 }
