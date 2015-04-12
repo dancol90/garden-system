@@ -13,7 +13,7 @@
 */
 void update_schedule() {
     int8_t min_index, next_index;
-    long   min_value;
+    long   min_value, next_value;
     Interval job;
 
     for (byte r = 0; r < RECEIVER_COUNT; r++) {
@@ -25,6 +25,7 @@ void update_schedule() {
          min_index = -1;
         next_index = -1;
          min_value = 0xFFFF;
+        next_value = 0xFFFF;
 
         for(byte i = 0; i < jobs_count; i++) {
             job = get_recv_job(r, i);
@@ -35,17 +36,31 @@ void update_schedule() {
                     // A smaller value than the last one was found. Save it
                     min_value = job.start.minutes;
                     min_index = i;
-
-                    // If this job is also later today, it's what we are searching for.
-                    if (job.start.minutes >= now.minutes)
-                        next_index = i;
                 }
                 
-                if (job.start.minutes <= now.minutes && now.minutes < job.end.minutes) {
-                    receivers[r].active = true;
-                    receivers[r].current_job = i;
+                // If this job is later today, it's what we are searching for.
+                if (job.start.minutes < next_value && job.start.minutes >= now.minutes) {
+                    next_value = job.start.minutes;
+                    next_index = i;
+                    Serial.println(next_index);
+                }
+
+                bool condition = job.start.minutes <= now.minutes && now.minutes < job.end.minutes;
+
+                if (receivers[r].active != condition) {
+                    // Change the state only if is not forced by the user
+                    if (!receivers[r].forced) {
+                        receivers[r].active = condition;
+                    }
                 } else {
-                    receivers[r].active = false;
+                    // Keep the forced state until it matches the scheduled one.
+                    receivers[r].forced = false;
+                }
+
+                if (condition) {
+                    receivers[r].current_job = i;
+
+                    break;
                 }
             }
         }

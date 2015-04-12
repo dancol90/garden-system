@@ -148,6 +148,7 @@ void job_delete() {
 
 void force_recv(uint8_t s) {
     selected_receiver.active = s;
+    selected_receiver.forced = true;
 
     state.menu_active = false;
 }

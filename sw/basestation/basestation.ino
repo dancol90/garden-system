@@ -65,6 +65,8 @@ void setup() {
     //Serial.print(F("before: ")); Serial.println(ram);
     //Serial.print(F("after:  ")); Serial.println(free_ram());
     //Serial.print(F("diff:   ")); Serial.println(ram - free_ram());
+
+    state.force_schedule_update = true;
 }
 
 void loop() {

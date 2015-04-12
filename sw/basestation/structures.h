@@ -51,6 +51,7 @@ struct Settings {
 
 struct ReceiverState {
     bool active : 1;
+    bool forced : 1;
 
     byte :0;
 
