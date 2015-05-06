@@ -55,10 +55,13 @@ void init_rf() {
 void update_rf() {
     uint8_t recv_index;
 
-    if (radio.available()) {
+    if (radio.available(&recv_index)) {
         radio.flush_rx();
 
         write_tx_fifo();
+
+        if (recv_index < RECEIVER_COUNT)
+            receivers[recv_index].got_rf = true;
     }
 }
 

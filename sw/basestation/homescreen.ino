@@ -57,7 +57,13 @@ void draw_homescreen() {
 
         lcd.drawChar(char_x, 40, c, !receivers[i].active); 
 
-        offset += rect_w;       
+        if (receivers[i].got_rf) {
+            draw_selector(offset, 35);
+
+            receivers[i].got_rf = false;
+        }
+
+        offset += rect_w;
     }
 
     draw_selector(rect_w / 2 + rect_w * state.selected_recv - 3, 35);

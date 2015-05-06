@@ -53,6 +53,8 @@ struct ReceiverState {
     bool active : 1;
     bool forced : 1;
 
+    bool got_rf : 1;
+
     byte :0;
 
     int8_t current_job : 4;
