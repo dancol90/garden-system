@@ -80,14 +80,19 @@ void setup(void) {
   pinMode(MOTOR_1, OUTPUT);
   pinMode(MOTOR_2, OUTPUT);
 
+  pinMode(A3, OUTPUT);
+
   // Inital state is OFF
   current_state = false;
   setSolenoidState(false);
 }
 
 void loop(void) {
+  digitalWrite(A3, HIGH);
   // Radio must be awake to send data.
   radio.powerUp();
+
+  goToSleep(WDTO_30MS);
 
   // Populate request packet with current information.
   packet.command = 0xF5;
@@ -110,12 +115,6 @@ void loop(void) {
     // Read it
     radio.read(&packet, RF24_PAYLOAD);
 
-    // TODO: validate packet
-    
-    // Debug LED flashing
-    setSolenoidState(true);  goToSleep(WDTO_60MS);
-    setSolenoidState(false); goToSleep(WDTO_120MS);
-
     // If basestation says that the state changed, then change it.
     if (packet.state != current_state) {
       // Change the state only the first time
@@ -129,8 +128,10 @@ void loop(void) {
   // It's done. Now, rest.
   radio.powerDown();
 
-  // Make the mcu sleep for about 8 seconds.
-  goToSleep(WDTO_8S);
+  digitalWrite(A3, LOW);
+
+  // Make the mcu sleep for about 1 seconds.
+  goToSleep(WDTO_1S);
 }
 
 // -----------------------------------------
@@ -160,10 +161,10 @@ void goToSleep(uint8_t timeout) {
 /**
 */
 void setSolenoidState(bool open) {
-  digitalWrite(MOTOR_1, !open); // LOW if open
-  digitalWrite(MOTOR_2,  open); // HIGH if open
+  digitalWrite(MOTOR_1,  open); // HIGH if open
+  digitalWrite(MOTOR_2, !open); // LOW  if open
 
-  goToSleep(WDTO_120MS);
+  goToSleep(WDTO_60MS);
 
   digitalWrite(MOTOR_1, LOW);
   digitalWrite(MOTOR_2, LOW);
