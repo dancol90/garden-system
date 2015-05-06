@@ -9,6 +9,14 @@
 #define eeprom_job_address(recv, index) eeprom_jobs_start + eeprom_jobs_size * recv + sizeof(Interval) * index
 #define eeprom_job_string_address(recv, index) eeprom_strings_start + 14 * (jobs_count * recv + index)
 
+#ifdef ESP8266
+  #define EEPROM_update EEPROM.write
+  #define EEPROM_commit EEPROM.commit
+#else
+  #define EEPROM_update EEPROM.update
+  #define EEPROM_commit
+#endif
+
 Interval get_recv_job(byte recv, byte index) {
     Interval job;
 
@@ -18,6 +26,7 @@ Interval get_recv_job(byte recv, byte index) {
 }
 
 void get_recv_job_string(byte recv, byte index, char* buff) {
+    // Can't use EEPROM.get here because it doesn't works with arrays of chars (sizeof(char*) = size of the pointer, not the content)
     for (byte i = 0; i < 14; i++) {
         buff[i] = EEPROM.read(eeprom_job_string_address(recv, index) + i);
     }
@@ -37,8 +46,9 @@ void save_recv_job(byte recv, byte index, Interval job) {
         job.end.s.h,   job.end.s.m
     );
 
+    // Can't use EEPROM.put here because it doesn't works with arrays of chars (sizeof(char*) = size of the pointer, not the content)
     for (byte i = 0; i < 14; i++) {
-        EEPROM.update(eeprom_job_string_address(recv, index) + i, job_name[i]);
+        EEPROM_update(eeprom_job_string_address(recv, index) + i, job_name[i]);
     }
 }
 

@@ -5,7 +5,7 @@
  Author: Daniele Colanardi
  License: BSD, see LICENSE file
 ############################################################################################*/
-
+#ifdef AVR
 long read_vcc() {
   // Read 1.1V reference against AVcc
   // set the reference to Vcc and the measurement to the internal 1.1V reference
@@ -37,5 +37,5 @@ int free_ram() {
   int v; 
   return (int) &v - (__brkval == 0 ? (int) &__heap_start : (int) __brkval); 
 }
-
+#endif
 // ############################################################################################

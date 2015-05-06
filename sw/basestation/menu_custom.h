@@ -31,7 +31,7 @@ class TimeSelector : public MenuItem {
         typedef void(*TimeSelectedCallback)(bool);
 
 
-        TimeSelector(MenuItem* parent, const __FlashStringHelper* text, Time& variable, TimeSelectedCallback callback = NULL) : MenuItem(parent, text), variable(variable), callback(callback) {};
+        TimeSelector(MenuItem* parent, const FlashString* text, Time& variable, TimeSelectedCallback callback = NULL) : MenuItem(parent, text), variable(variable), callback(callback) {};
 
         Time getValue() { return variable; }
 
