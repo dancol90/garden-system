@@ -18,10 +18,11 @@ const uint64_t RF24_BASE_PIPE = 0xF0F0F0F000LL;
 
 const uint8_t RECEIVER_COUNT = 2;
 
-const uint8_t button_timer_interval = 15;
+const int     button_timer_interval = 15;
+const int     button_rebounce_interval = 200;
 const uint8_t button_analog_threshold = 100;
 
-const uint8_t button_pins[] = { A2, A1, 4, 5 };
+const uint8_t button_pins[] = { 12,13,14,15 };
 
 enum Button {
 	BTN_UP,
