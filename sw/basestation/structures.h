@@ -28,6 +28,7 @@ struct ButtonState {
     uint8_t changed :1;
     uint8_t state   :1;
     
+    uint8_t dirty   :1;
     uint8_t read    :1;
     long timer;
 };
