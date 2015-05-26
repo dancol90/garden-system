@@ -12,9 +12,11 @@
 #ifdef ESP8266
   #define EEPROM_update EEPROM.write
   #define EEPROM_commit EEPROM.commit
+  #define EEPROM_begin  EEPROM.begin
 #else
   #define EEPROM_update EEPROM.update
   #define EEPROM_commit
+  #define EEPROM_begin
 #endif
 
 Interval get_recv_job(byte recv, byte index) {
@@ -68,6 +70,8 @@ void format_eeprom() {
 }
 
 void init_eeprom() {
+    EEPROM_begin(500);
+
     if (EEPROM.read(0) != 0xDC) {
         format_eeprom();
 

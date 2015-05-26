@@ -10,7 +10,7 @@ Menu* root = new Menu(NULL, NULL);
 Menu* timer_edit;
 MenuItem* add_entry;
 
-LcdDrawer dr = LcdDrawer(lcd);
+CustomLcdDrawer dr = CustomLcdDrawer(lcd);
 
 Interval job_copy; uint8_t job_ind;
 
@@ -42,11 +42,11 @@ void init_menu() {
 
     sub = new Menu(root, F("Impostazioni"));
 
+#if 0
         sub->addItem(new NumericSelector(sub, F("Retroilluminazione"), settings.backlight, 1, 20, lcd_cb));
         sub->addItem(new NumericSelector(sub, F("Contrasto"),          settings.contrast,  1, 20, lcd_cb));
+#endif
         sub->addItem(new    TimeSelector(sub, F("Ora"),                now, time_cb));
-
-
         sub->addItem(new          Action(sub, F("Ripristina memoria"), factory_wipe));    
 
         root->addItem(sub);

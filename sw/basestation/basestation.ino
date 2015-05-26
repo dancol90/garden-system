@@ -9,24 +9,17 @@
 #include <SPI.h>
 #include <Wire.h>
 #include <EEPROM.h>
-
-#include <LightPCD8544.h>
-#include "nRF24L01.h"
-#include "RF24.h"
-
+#include <RF24.h>
+#include <LightLCD.h>
+#include <LightSSD1306.h>
+#include <LightMPR121.h>
 #include <MenuLib.h>
-#include <NokiaLcdDrawer.h>
+#include <LcdDrawer.h>
 
 #include "structures.h"
-#include "digit_font.h"
+#include "config.h"
 
-#if defined(AVR)
-	#include "config_arduino.h"
-#elif defined(ESP8266)
-	#include "config_esp8266.h"
-#else
-	#error "No compatible platform defined. Check your settings."
-#endif
+#include "digit_font.h"
 
 #define selected_receiver receivers[state.selected_recv]
 
@@ -38,7 +31,8 @@ Settings settings;
 
 ReceiverState receivers[RECEIVER_COUNT];
 
-LightPCD8544 lcd = LightPCD8544(LCD_DC, LCD_CS);
+LightSSD1306 lcd = LightSSD1306();
+
 MenuController menu;
 
 #include "menu_custom.h"
@@ -46,7 +40,7 @@ MenuController menu;
 // ############################################################################################
 
 void setup() {
-    Serial.begin(9600);
+    Serial.begin(115200);
 
     init_eeprom();
 
@@ -60,7 +54,7 @@ void setup() {
 
     Wire.begin();
 
-    init_rf();
+    //init_rf();
 
     init_buttons();
     init_lcd();

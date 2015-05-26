@@ -6,15 +6,8 @@
  License: BSD, see LICENSE file
 ############################################################################################*/
 
-long lcd_bl_time;
-
-void init_lcd() {
-    // Setup LCD backlight pin
-    pinMode(LCD_LED, OUTPUT);
-    
+void init_lcd() { 
     lcd.begin();
-
-    state.lcd_settings_dirty = true;
 }
 
 void draw_big_digit(uint8_t xPos, uint8_t yPos, uint8_t digit) {
@@ -36,23 +29,5 @@ void draw_big_digit(uint8_t xPos, uint8_t yPos, uint8_t digit) {
     }
 }
 
-void update_lcd() {
-    if (state.lcd_settings_dirty) {
-        start_backlight_timer();
-        lcd.setContrast(40 + settings.contrast);
-
-        state.lcd_settings_dirty = false;
-    }
-
-    if (lcd_bl_time && millis() - lcd_bl_time > 10000) {
-        analogWrite(LCD_LED, 0);
-        lcd_bl_time = 0;
-    }
-
-}
-
-void start_backlight_timer() {
-    lcd_bl_time = millis();
-    
-    analogWrite(LCD_LED, 12 * settings.backlight);
-}
+void update_lcd() {}
+void start_backlight_timer() {}

@@ -6,6 +6,7 @@
  License: BSD, see LICENSE file
 ############################################################################################*/
 
+#include <LightLCD.h>
 #include "structures.h"
 
 // Job name is generated on the fly, so I can use a global buffer to spare a LOT of RAM
@@ -99,7 +100,16 @@ class TimeSelector : public MenuItem {
         TimeSelectedCallback callback;
 };
 
-class LcdDrawer : public NokiaLcdDrawer {
+// Leave this line commented to use library's defaults
+#define RECT_W 31
+//#define RECT_H 14
+//#define RECT_Y 18
+
+#define RECT1_X (lcd.width() - 2*RECT_W) / 3
+#define RECT2_X 2*RECT1_X + RECT_W
+//#define TEXT_Y  RECT_Y + (RECT_H - 7) / 2
+
+class CustomLcdDrawer : public LcdDrawer {
     protected:
         void drawOther(MenuItem* item) {
             if (item->getTypeId() == 'd') {
@@ -109,20 +119,20 @@ class LcdDrawer : public NokiaLcdDrawer {
                 drawCenterText(t, 0);
                 
                 // Draw a rect around the value
-                lcd.drawRect( 7, 18, 31, 14, 1);
-                lcd.drawRect(46, 18, 31, 14, 1);
-             
+                lcd.drawRect(RECT1_X, RECT_Y, RECT_W, RECT_H, 1);
+                lcd.drawRect(RECT2_X, RECT_Y, RECT_W, RECT_H, 1);
+
                 // Some decoration
-                lcd.drawChar(11 + 39 * t->getStage(), 21, '<', BLACK);
-                lcd.drawChar(31 + 39 * t->getStage(), 21, '>', BLACK);
+                int x = (t->getStage() ? RECT2_X : RECT1_X);
+                lcd.drawChar(x + 3,          TEXT_Y, '<', BLACK);
+                lcd.drawChar(x + RECT_W - 6, TEXT_Y, '>', BLACK);
 
                 // Guess the x pos to center the value number
-                drawCenterNumber(t->getValue().s.h, 21,  7, 38);
-                drawCenterNumber(t->getValue().s.m, 21, 46, 77);
-                
+                drawCenterNumber(t->getValue().s.h, TEXT_Y, RECT1_X, RECT1_X + RECT_W);
+                drawCenterNumber(t->getValue().s.m, TEXT_Y, RECT2_X, RECT2_X + RECT_W);
             }
         } 
 
     public:
-        LcdDrawer(LightPCD8544& lcd) : NokiaLcdDrawer(lcd) {}
+        CustomLcdDrawer(LightLCD& lcd) : LcdDrawer(lcd) {}
 };

@@ -6,10 +6,6 @@
  License: BSD, see LICENSE file
 ############################################################################################*/
 
-const uint8_t LCD_DC  = 8;
-const uint8_t LCD_CS  = 9;
-const uint8_t LCD_LED = 6;
-
 const uint8_t RF24_CE  = 10;
 const uint8_t RF24_CSN = A0;
 
@@ -18,12 +14,6 @@ const uint64_t RF24_BASE_PIPE = 0xF0F0F0F000LL;
 
 const uint8_t RECEIVER_COUNT = 2;
 
-const int     button_timer_interval = 15;
-const int     button_rebounce_interval = 200;
-const uint8_t button_analog_threshold = 100;
-
-const uint8_t button_pins[] = { 12,13,14,15 };
-
 enum Button {
 	BTN_UP,
 	BTN_DOWN,
@@ -31,10 +21,19 @@ enum Button {
 	BTN_BACK
 };
 
-
 const uint8_t jobs_count = 10;
 const uint16_t eeprom_settings_start = 0x01;
 const uint16_t eeprom_jobs_start     = 0x0100;
 
 const uint16_t eeprom_jobs_size = sizeof(Interval) * jobs_count;
 const uint16_t eeprom_strings_start = eeprom_jobs_start + eeprom_jobs_size * RECEIVER_COUNT;
+
+// Temporary fix waiting to adapt everything.
+// TODO: change related code to support ESP8266 core
+#undef F
+#undef PSTR
+
+#define F(str) str
+#define PSTR(str) str
+
+#define sprintf_P sprintf
