@@ -42,7 +42,10 @@ class TimeSelector : public MenuItem {
         char getTypeId() { return 'd'; };
 
         const char* getSecondaryText() {
-            sprintf_P(valueStr, PSTR("<%2d:%02d>"), variable.s.h, variable.s.m);
+            // TODO: this give errors on PSTR...why?
+            //snprintf_P(valueStr, 10, PSTR("<%2d:%02d>"), variable.s.h, variable.s.m);
+            snprintf(valueStr, 10, "<%2d:%02d>", variable.s.h, variable.s.m);
+
 
             return valueStr;
         }
@@ -80,9 +83,11 @@ class TimeSelector : public MenuItem {
         }
 
         MenuItem* action() {
-            if (stage == 0)
+            if (stage == 0) {
                 stage++;
-            else {
+                
+                return NULL;
+            } else {
                 if (this->callback) this->callback(false);
 
                 return this->getParent();
@@ -101,9 +106,11 @@ class TimeSelector : public MenuItem {
 };
 
 // Leave this line commented to use library's defaults
+#undef RECT_W
+#undef RECT_Y
 #define RECT_W 31
 //#define RECT_H 14
-//#define RECT_Y 18
+#define RECT_Y 25
 
 #define RECT1_X (lcd.width() - 2*RECT_W) / 3
 #define RECT2_X 2*RECT1_X + RECT_W
@@ -134,5 +141,5 @@ class CustomLcdDrawer : public LcdDrawer {
         } 
 
     public:
-        CustomLcdDrawer(LightLCD& lcd) : LcdDrawer(lcd) {}
+        CustomLcdDrawer(LightLCD& lcd) : LcdDrawer(lcd, 4) {}
 };

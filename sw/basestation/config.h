@@ -27,13 +27,3 @@ const uint16_t eeprom_jobs_start     = 0x0100;
 
 const uint16_t eeprom_jobs_size = sizeof(Interval) * jobs_count;
 const uint16_t eeprom_strings_start = eeprom_jobs_start + eeprom_jobs_size * RECEIVER_COUNT;
-
-// Temporary fix waiting to adapt everything.
-// TODO: change related code to support ESP8266 core
-#undef F
-#undef PSTR
-
-#define F(str) str
-#define PSTR(str) str
-
-#define sprintf_P sprintf

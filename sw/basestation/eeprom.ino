@@ -42,7 +42,7 @@ void save_recv_job(byte recv, byte index, Interval job) {
     // Generate string
     char job_name[14];
 
-    sprintf_P(job_name,
+    snprintf_P(job_name, 14,
         PSTR("%2d:%02d \x1a %2d:%02d"),
         job.start.s.h, job.start.s.m,
         job.end.s.h,   job.end.s.m
