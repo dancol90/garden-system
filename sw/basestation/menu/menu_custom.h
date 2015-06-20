@@ -6,8 +6,10 @@
  License: BSD, see LICENSE file
 ############################################################################################*/
 
+#ifndef __menu_custom_h__
+#define __menu_custom_h__
+
 #include <LightLCD.h>
-#include "structures.h"
 
 // Job name is generated on the fly, so I can use a global buffer to spare a LOT of RAM
 char job_name[14];
@@ -143,3 +145,6 @@ class CustomLcdDrawer : public LcdDrawer {
     public:
         CustomLcdDrawer(LightLCD& lcd) : LcdDrawer(lcd, 4) {}
 };
+
+
+#endif

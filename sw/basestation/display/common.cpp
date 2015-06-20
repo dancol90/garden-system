@@ -6,9 +6,7 @@
  License: BSD, see LICENSE file
 ############################################################################################*/
 
-void init_lcd() { 
-    lcd.begin();
-}
+#include "display.h"
 
 void draw_big_digit(uint8_t xPos, uint8_t yPos, uint8_t digit) {
     uint8_t x, y, b, i, r = row_size;
@@ -28,6 +26,3 @@ void draw_big_digit(uint8_t xPos, uint8_t yPos, uint8_t digit) {
         }
     }
 }
-
-void update_lcd() {}
-void start_backlight_timer() {}

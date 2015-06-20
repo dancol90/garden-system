@@ -6,33 +6,8 @@
  License: BSD, see LICENSE file
 ############################################################################################*/
 
-#ifndef structures_h
-#define structures_h
-
-union Time {
-    uint16_t minutes;
-    struct {
-        uint8_t m;
-        uint8_t h;
-    } s;
-};
-
-struct Interval {
-    Time start;
-    Time end;
-
-    bool enabled : 1;
-};
-
-struct ButtonState {
-    uint8_t changed :1;
-    uint8_t state   :1;
-    
-    uint8_t dirty   :1;
-    uint8_t read    :1;
-    long timer;
-};
-
+#ifndef __settings_h__
+#define __settings_h__
 
 struct ApplicationState {
     uint8_t selected_recv : 3; // The index of the selected receiver
@@ -49,23 +24,7 @@ struct Settings {
     uint8_t backlight;
 };
 
-
-struct ReceiverState {
-    bool active : 1;
-    bool forced : 1;
-
-    bool got_rf : 1;
-
-    byte :0;
-
-    int8_t current_job : 4;
-    int8_t    next_job : 4;
-};
-
-struct Packet {
-    uint8_t command;
-    uint8_t id;
-    uint8_t state;
-};
+extern ApplicationState state;
+extern Settings settings;
 
 #endif

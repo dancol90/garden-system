@@ -6,6 +6,10 @@
  License: BSD, see LICENSE file
 ############################################################################################*/
 
+#include "receivers.h"
+
+ReceiverState receivers[RECEIVER_COUNT];
+
 /*
     Update the jobs schedule, starting a new job if it's time, of ending it if needed.
 

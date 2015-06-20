@@ -4,3 +4,4 @@
 *.s#*
 battery.numbers
 sim
+sw/basestation/build

@@ -6,9 +6,12 @@
  License: BSD, see LICENSE file
 ############################################################################################*/
 
+#include "rtc.h"
+
 static uint8_t bcd2bin (uint8_t val) { return val - 6 * (val >> 4); }
 static uint8_t bin2bcd (uint8_t val) { return val + 6 * (val / 10); }
 
+Time now;
 uint8_t last_minute = 0;
 
 void read_time() {

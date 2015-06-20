@@ -6,9 +6,8 @@
  License: BSD, see LICENSE file
 ############################################################################################*/
 
-#define eeprom_job_address(recv, index) eeprom_jobs_start + eeprom_jobs_size * recv + sizeof(Interval) * index
-#define eeprom_job_string_address(recv, index) eeprom_strings_start + 14 * (jobs_count * recv + index)
-
+#include "storage.h"
+ 
 #ifdef ESP8266
   #define EEPROM_update EEPROM.write
   #define EEPROM_commit EEPROM.commit
@@ -18,6 +17,7 @@
   #define EEPROM_commit
   #define EEPROM_begin
 #endif
+
 
 Interval get_recv_job(byte recv, byte index) {
     Interval job;

@@ -6,39 +6,13 @@
  License: BSD, see LICENSE file
 ############################################################################################*/
 
-#include <SPI.h>
-#include <Wire.h>
-#include <EEPROM.h>
-#include <RF24.h>
-#include <LightLCD.h>
-#include <LightSSD1306.h>
-#include <LightMPR121.h>
-#include <MenuLib.h>
-#include <LcdDrawer.h>
-
-#include "structures.h"
-#include "config.h"
-
-#include "digit_font.h"
-
-#define selected_receiver receivers[state.selected_recv]
+#include "basestation.h"
 
 // ############################################################################################
-
-Time now;
 ApplicationState state;
 Settings settings;
 
-ReceiverState receivers[RECEIVER_COUNT];
-
-LightSSD1306 lcd = LightSSD1306();
-
-MenuController menu;
-
-#include "menu_custom.h"
-
 // ############################################################################################
-
 void setup() {
     Serial.begin(115200);
 
@@ -57,7 +31,7 @@ void setup() {
     //init_rf();
 
     init_buttons();
-    init_lcd();
+    init_display();
 
     //int ram = free_ram();
 
@@ -93,7 +67,7 @@ void loop() {
         update_homescreen();
     }
 
-    update_lcd();
+    update_display();
 
     delay(50);
 }

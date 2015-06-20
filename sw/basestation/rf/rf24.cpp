@@ -6,13 +6,9 @@
  License: BSD, see LICENSE file
 ############################################################################################*/
 
-class MyRF24 : public RF24 {
-    public:
-          MyRF24(uint8_t _cepin, uint8_t _cspin) : RF24(_cepin, _cspin) {}
+#include "rf.h"
 
-          uint8_t flush_rx(void) { RF24::flush_rx(); };
-          uint8_t flush_tx(void) { RF24::flush_tx(); };
-};
+MyRF24 radio(RF24_CE, RF24_CSN);
 
 /*
     ATTENTION!! This definition is just temporary.
@@ -23,8 +19,6 @@ class MyRF24 : public RF24 {
     By now just link pipes with index number, avoiding id=0
 */
 #define get_recv_id(i) (i + 1)
-
-MyRF24 radio(RF24_CE, RF24_CSN);
 
 void init_rf() {
     radio.begin();

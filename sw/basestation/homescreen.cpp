@@ -6,6 +6,8 @@
  License: BSD, see LICENSE file
 ############################################################################################*/ 
 
+#include "homescreen.h"
+
 uint8_t rect_w = lcd.width() / RECEIVER_COUNT;
 
 long w = 0;

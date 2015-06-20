@@ -6,6 +6,9 @@
  License: BSD, see LICENSE file
 ############################################################################################*/
 
+#ifndef __digit_font_h__
+#define __digit_font_h__
+
 #define font_w 16
 #define font_h 22
 
@@ -26,3 +29,5 @@ static unsigned const char numbers[] PROGMEM = {
   
    0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x3C,0x7E,0x7E,0x7E,0x7E,0x3C,0x00 // Code for char num 46
 };
+
+#endif
