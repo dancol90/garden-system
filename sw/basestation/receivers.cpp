@@ -36,20 +36,19 @@ void update_schedule() {
 
             // The lowest one but after the current time
             if (job.enabled) {
-                if (job.start.minutes < min_value) {
+                if (job.start < min_value) {
                     // A smaller value than the last one was found. Save it
-                    min_value = job.start.minutes;
+                    min_value = job.start.stamp();
                     min_index = i;
                 }
 
                 // If this job is later today, it's what we are searching for.
-                if (job.start.minutes < next_value && job.start.minutes >= now.minutes) {
-                    next_value = job.start.minutes;
-                        next_index = i;
-                    Serial.println(next_index);
+                if (job.start < next_value && job.start >= now.time) {
+                    next_value = job.start.stamp();
+                    next_index = i;
                 }
                 
-                bool condition = job.start.minutes <= now.minutes && now.minutes < job.end.minutes;
+                bool condition = job.start <= now.time && now.time < job.end;
 
                 if (receivers[r].active != condition) {
                     // Change the state only if is not forced by the user

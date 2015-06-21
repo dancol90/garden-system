@@ -7,30 +7,34 @@
 ############################################################################################*/
 
 #include "rtc.h"
+#include <Wire.h>
+
+#ifdef USE_DS3231_RTC
 
 static uint8_t bcd2bin (uint8_t val) { return val - 6 * (val >> 4); }
 static uint8_t bin2bcd (uint8_t val) { return val + 6 * (val / 10); }
 
-Time now;
+DateTime now;
 uint8_t last_minute = 0;
 
-void read_time() {
+void update_rtc() {
     if (state.rtc_stop) return;
 
     Wire.beginTransmission(0x68);
-    Wire.write(0x01);
+    Wire.write(0x00);
     Wire.endTransmission();
 
-    Wire.requestFrom(0x68, 2);
+    Wire.requestFrom(0x68, 3);
 
-    now.s.m = bcd2bin(Wire.read());
-    now.s.h = bcd2bin(Wire.read());
+    now.time.second = bcd2bin(Wire.read());
+    now.time.minute = bcd2bin(Wire.read());
+    now.time.hour   = bcd2bin(Wire.read());
 
-    state.new_minute = (last_minute != now.s.m);
-    last_minute = now.s.m;
+    state.new_minute = (last_minute != now.s.minute);
+    last_minute = now.s.minute;
 }
 
-void write_time(Time t) {
+void write_time(DateTime t) {
     Wire.beginTransmission(0x68);
     // First register, seconds
     Wire.write(0x00);
@@ -38,8 +42,8 @@ void write_time(Time t) {
     // Reset seconds
     Wire.write(0);
     // Write mins and hours
-    Wire.write(bin2bcd(t.s.m));
-    Wire.write(bin2bcd(t.s.h));
+    Wire.write(bin2bcd(t.time.minute));
+    Wire.write(bin2bcd(t.time.hour));
 
     Wire.endTransmission();
 }
@@ -54,3 +58,5 @@ void init_rtc() {
 
     Wire.endTransmission();
 }
+
+#endif

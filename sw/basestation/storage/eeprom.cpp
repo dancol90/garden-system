@@ -18,6 +18,11 @@
   #define EEPROM_begin
 #endif
 
+const uint16_t eeprom_jobs_size = sizeof(Interval) * jobs_count;
+const uint16_t eeprom_strings_start = eeprom_jobs_start + eeprom_jobs_size * RECEIVER_COUNT;
+
+#define eeprom_job_address(recv, index) eeprom_jobs_start + eeprom_jobs_size * recv + sizeof(Interval) * index
+#define eeprom_job_string_address(recv, index) eeprom_strings_start + 14 * (jobs_count * recv + index)
 
 Interval get_recv_job(byte recv, byte index) {
     Interval job;
@@ -44,8 +49,8 @@ void save_recv_job(byte recv, byte index, Interval job) {
 
     snprintf_P(job_name, 14,
         PSTR("%2d:%02d \x1a %2d:%02d"),
-        job.start.s.h, job.start.s.m,
-        job.end.s.h,   job.end.s.m
+        job.start.hour, job.start.minute,
+        job.end.hour,   job.end.minute
     );
 
     // Can't use EEPROM.put here because it doesn't works with arrays of chars (sizeof(char*) = size of the pointer, not the content)

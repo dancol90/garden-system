@@ -10,17 +10,42 @@
 #define __rtc_h__
 
 #include <Arduino.h>
-#include <Wire.h>
 
 #include "../config/config.h"
 #include "../settings.h"
 
-union Time {
-    uint16_t minutes;
-    struct {
-        uint8_t m;
-        uint8_t h;
-    } s;
+struct Time {
+    uint8_t minute;
+    uint8_t hour;
+    uint8_t second;
+
+    long stamp() const { return (minute + (hour << 8)); }
+
+    bool operator==(const Time& a) const { return (minute == a.minute && hour == a.hour); }
+
+    bool operator>(const Time& a) const { return stamp() > a.stamp(); }
+    bool operator<(const Time& a) const { return stamp() < a.stamp(); }
+
+    bool operator>=(const Time& a) const { return stamp() >= a.stamp(); }
+    bool operator<=(const Time& a) const { return stamp() <= a.stamp(); }
+
+    bool operator>(const long& a) const { return stamp() > a; }
+    bool operator<(const long& a) const { return stamp() < a; }
+
+};
+
+struct Date {
+    uint8_t day;
+    uint8_t month;
+    int     year;
+
+    uint8_t dow;
+    bool    leap;
+};
+
+struct DateTime {
+    Time time;
+    Date date;
 };
 
 struct Interval {
@@ -30,11 +55,11 @@ struct Interval {
     bool enabled : 1;
 };
 
+extern DateTime now;
+
 void init_rtc();
+void update_rtc();
 
-void read_time();
-void write_time(Time t);
-
-extern Time now;
+void write_time(DateTime t);
 
 #endif

@@ -69,7 +69,7 @@ void job_add() {
 */
 void job_changed(bool enter) {
     // Update on exit
-    if (!enter && job_copy.start.minutes < job_copy.end.minutes) {
+    if (!enter && job_copy.start < job_copy.end) {
         job_copy.enabled = true;
         job_update();
     }
@@ -159,7 +159,7 @@ void init_menu() {
         sub->addItem(new NumericSelector(sub, F("Retroilluminazione"), settings.backlight, 1, 20, lcd_cb));
         sub->addItem(new NumericSelector(sub, F("Contrasto"),          settings.contrast,  1, 20, lcd_cb));
 #endif
-        sub->addItem(new    TimeSelector(sub, F("Ora"),                now, time_cb));
+        sub->addItem(new    TimeSelector(sub, F("Ora"),                now.time, time_cb));
         sub->addItem(new          Action(sub, F("Ripristina memoria"), factory_wipe));    
 
         root->addItem(sub);

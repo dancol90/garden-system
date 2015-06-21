@@ -10,10 +10,14 @@
 #define __display_h__
 
 #include <Arduino.h>
-
-#include <Wire.h>
 #include <LightLCD.h>
-#include <LightSSD1306.h>
+#include "../config/config.h"
+
+#if defined USE_SSD1306
+	#include <LightSSD1306.h>
+#elif defined USE_PCD8544
+	#include <LightPCD8544.h>
+#endif
 
 void init_display();
 void update_display();
@@ -25,6 +29,6 @@ void start_backlight_timer();
 
 void draw_big_digit(uint8_t xPos, uint8_t yPos, uint8_t digit);
 
-extern LightSSD1306 lcd;
+extern LightLCD& lcd;
 
 #endif

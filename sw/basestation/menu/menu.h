@@ -21,8 +21,6 @@
 #include "../receivers.h"
 #include "../settings.h"
 
-#include <LcdDrawer.h>
-
 extern char job_name[];
 
 void init_menu();

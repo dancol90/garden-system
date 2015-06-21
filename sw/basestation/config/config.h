@@ -11,6 +11,14 @@
 
 #include <Arduino.h>
 
+#define USE_SSD1306
+//#define USE_PCD8544
+
+//#define USE_DS3231_RTC
+#define USE_SW_RTC
+
+const int TIMEZONE = +2;
+
 const uint8_t RF24_CE  = 10;
 const uint8_t RF24_CSN = A0;
 
@@ -27,6 +35,6 @@ enum Button {
 
 const uint8_t jobs_count = 10;
 const uint16_t eeprom_settings_start = 0x01;
-const uint16_t eeprom_jobs_start     = 0x0100;
+const uint16_t eeprom_jobs_start     = 0x0010;
 
 #endif

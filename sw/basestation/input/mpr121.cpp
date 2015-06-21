@@ -6,11 +6,13 @@
  License: BSD, see LICENSE file
 ############################################################################################*/
 
+#include <Wire.h>
 #include "input.h"
 
 LightMPR121 touch;
 
 void init_buttons() {
+	Wire.begin();
     touch.begin();
 }
 

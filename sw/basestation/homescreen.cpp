@@ -22,13 +22,13 @@ void draw_homescreen() {
     
     lcd.clear();
 
-    draw_big_digit(4,          1, now.s.h   / 10);   
-    draw_big_digit(6 + font_w, 1, now.s.h   % 10); 
+    draw_big_digit(4,          1, now.time.hour   / 10);   
+    draw_big_digit(6 + font_w, 1, now.time.hour   % 10); 
 
     draw_big_digit(6 + 2*font_w, 1, '.');
 
-    draw_big_digit(14 + 2*font_w, 1, now.s.m / 10);   
-    draw_big_digit(16 + 3*font_w, 1, now.s.m % 10);
+    draw_big_digit(14 + 2*font_w, 1, now.time.minute / 10);   
+    draw_big_digit(16 + 3*font_w, 1, now.time.minute % 10);
 
     lcd.setCursor(84, 4);
     lcd.print("Mer 20");
