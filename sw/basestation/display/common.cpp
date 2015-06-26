@@ -26,3 +26,16 @@ void draw_big_digit(uint8_t xPos, uint8_t yPos, uint8_t digit) {
         }
     }
 }
+
+
+void show_message(const __FlashStringHelper* msg) {
+    lcd.clear();
+
+    uint8_t y = (lcd.height() - 7) / 2;
+    uint8_t x = (lcd.width() - lcd.getStringWidth(msg)) / 2;
+
+    lcd.setCursor(x, y);
+    lcd.print(msg);
+
+    lcd.update();
+}

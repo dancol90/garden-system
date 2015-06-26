@@ -17,7 +17,7 @@ extern char job_name[];
 
 class JobEntry : public ParamAction<uint8_t> {
     public:
-        JobEntry(MenuItem* parent, ActionCallback callback, int index) : ParamAction(parent, NULL, callback, index) {
+        JobEntry(MenuItem* parent, ActionCallback callback, uint8_t index) : ParamAction(parent, (char*)NULL, callback, index) {
             this->is_flash = false;
         };
 

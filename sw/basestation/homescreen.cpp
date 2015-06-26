@@ -30,12 +30,16 @@ void draw_homescreen() {
     draw_big_digit(14 + 2*font_w, 1, now.time.minute / 10);   
     draw_big_digit(16 + 3*font_w, 1, now.time.minute % 10);
 
-    lcd.setCursor(84, 4);
-    lcd.print("Mer 20");
-    lcd.setCursor(84, 14);
-    lcd.print("Settembre");
+    sprintf(job_name, "%s %d", get_dow_string(now), now.date.day);
 
-    lcd.setCursor(1, 26);
+#ifdef USE_SSD1306
+    lcd.setCursor(86, 4);
+    lcd.print(job_name);
+    lcd.setCursor(86, 14);
+    lcd.print(get_month_string(now));
+#endif
+
+    lcd.setCursor(24, 32);
     
     if (selected_receiver.current_job >= 0) {
         get_job_string(selected_receiver.current_job, job_name);
@@ -50,23 +54,24 @@ void draw_homescreen() {
     }
 
     uint8_t offset_x = 0, char_x, c;
-    uint8_t offset_y = lcd.height() - 9;
+    uint8_t offset_y = lcd.height() - 15;
 
     lcd.drawHLine(0, offset_y, lcd.width(), BLACK);
 
     for (uint8_t i = 0; i < RECEIVER_COUNT; i++) {
         if (receivers[i].active)
-            lcd.fillRect(offset_x, offset_y, rect_w, 9, BLACK);
+            lcd.fillRect(offset_x, offset_y, rect_w, 15, BLACK);
         else if (i > 0)
-            lcd.drawVLine(offset_x, offset_y, 9, BLACK);
+            lcd.drawVLine(offset_x, offset_y, 15, BLACK);
 
         c = '1' + i;
         char_x = offset_x + (rect_w - lcd.getCharWidth(c)) / 2;
 
-        lcd.drawChar(char_x, offset_y + 1, c, !receivers[i].active); 
+        lcd.drawChar(char_x, offset_y + 4, c, !receivers[i].active); 
 
         if (receivers[i].got_rf) {
-            draw_selector(offset_x, offset_y - 4);
+            //draw_selector(offset_x, offset_y - 4);
+            lcd.fillRect(char_x - 5, offset_y + 6, 3, 3, !receivers[i].active);
 
             receivers[i].got_rf = false;
         }

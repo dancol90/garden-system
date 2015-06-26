@@ -29,6 +29,8 @@ void start_backlight_timer();
 
 void draw_big_digit(uint8_t xPos, uint8_t yPos, uint8_t digit);
 
+void show_message(const __FlashStringHelper* msg);
+
 extern LightLCD& lcd;
 
 #endif

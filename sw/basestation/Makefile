@@ -1,5 +1,5 @@
 TARGET    = basestation
-LIBRARIES = SPI Wire EEPROM RF24 LightLCD LightMPR121 MenuLib
+LIBRARIES = SPI Wire EEPROM RF24 LightLCD LightMPR121 MenuLib ESP8266WiFi
 
 F_CPU     = 80000000
 
@@ -7,7 +7,7 @@ UPLOAD_SPEED = 921600
 UPLOAD_PORT  = /dev/cu.SLAB_USBtoUART
 
 ARDUINO_PACKAGE_DIR = /Users/daniele/Library/Arduino15/packages/esp8266
-ARDUINO_CORE_DIR    = $(ARDUINO_PACKAGE_DIR)/hardware/esp8266/1.6.4-758-ga194024
+ARDUINO_CORE_DIR    = $(ARDUINO_PACKAGE_DIR)/hardware/esp8266/1.6.4-835-g77d77e8
 
 #############################################
 # Core paths and advanced configuration

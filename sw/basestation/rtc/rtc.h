@@ -62,4 +62,7 @@ void update_rtc();
 
 void write_time(DateTime t);
 
+const char*   get_dow_string(DateTime t);
+const char* get_month_string(DateTime t);
+
 #endif

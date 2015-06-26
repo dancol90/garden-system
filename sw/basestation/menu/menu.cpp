@@ -9,6 +9,9 @@
 #include "menu.h"
 #include "menu_custom.h"
 
+// Temp location
+#include <ESP8266WiFi.h>
+
 Menu* root = new Menu(NULL, NULL);
 Menu* timer_edit;
 MenuItem* add_entry;
@@ -127,6 +130,25 @@ void factory_wipe() {
 
 // ############################################################################################
 
+void wifi_selected(int i) {
+    Serial.print("Selected Wifi ");
+    Serial.println(i);
+}
+
+void wifi_enter(Menu* m) {
+    show_message(F("Ricerca..."));
+
+    m->clearItems();
+
+    int n = WiFi.scanNetworks();
+
+    for (int i = 0; i < n; i++) {
+        m->addItem(new ParamAction<int>(m, WiFi.SSID(i), wifi_selected, i));
+    }
+}
+
+// ############################################################################################
+
 void init_menu() {
 
     Menu* sub;
@@ -155,12 +177,14 @@ void init_menu() {
 
     sub = new Menu(root, F("Impostazioni"));
 
-#if 0
+#if USE_PCD8544
         sub->addItem(new NumericSelector(sub, F("Retroilluminazione"), settings.backlight, 1, 20, lcd_cb));
         sub->addItem(new NumericSelector(sub, F("Contrasto"),          settings.contrast,  1, 20, lcd_cb));
 #endif
         sub->addItem(new    TimeSelector(sub, F("Ora"),                now.time, time_cb));
         sub->addItem(new          Action(sub, F("Ripristina memoria"), factory_wipe));    
+
+        sub->addItem(new Menu(sub, F("WiFi"), wifi_enter));
 
         root->addItem(sub);
 
