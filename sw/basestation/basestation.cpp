@@ -26,7 +26,7 @@ void setup() {
 
     init_rtc();
 
-    //init_rf();
+    init_rf();
 
     init_buttons();
     init_display();

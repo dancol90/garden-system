@@ -19,8 +19,8 @@
 
 const int TIMEZONE = +2;
 
-const uint8_t RF24_CE  = 10;
-const uint8_t RF24_CSN = A0;
+const uint8_t RF24_CE  = 15;
+const uint8_t RF24_CSN = 0;
 
 const uint64_t RF24_BASE_PIPE = 0xF0F0F0F000LL;
 
