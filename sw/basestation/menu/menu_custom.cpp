@@ -74,9 +74,59 @@ MenuItem* TimeSelector::action() {
     }
 }
 
+/****************************************/
+
+bool PasswordInput::activate() {
+    memset(buffer, 0, 21);
+    sel_i = 0;
+    buffer[0] = 'a';
+    return true;
+}
+
+void PasswordInput::doNext() {
+    buffer[sel_i] = ' ' + (buffer[sel_i] - ' ' + 1) % 96; 
+}
+
+void PasswordInput::doPrev() {
+    buffer[sel_i] = ' ' + (buffer[sel_i] - ' ' + 95) % 96;
+}
+
+MenuItem* PasswordInput::action() {
+    if (buffer[sel_i] == 0x7F) {
+        // Remove the last special character
+        buffer[sel_i] = 0;
+
+        // Done
+        if (this->callback) this->callback((const char*)buffer);
+        return this->getParent();
+    } else {
+        // Jump to the next char
+        if(sel_i < 19) { 
+            sel_i++;
+            buffer[sel_i] = 'a';
+        }
+        return NULL;
+    }
+}
+
+bool PasswordInput::back() {
+    // Do not block the action if the first char is selected
+    if (sel_i == 0) {
+        return true;
+    } else {
+        buffer[sel_i] = 0;
+        sel_i--;
+        
+        return false;
+    }
+}
+
+/****************************************/
 
 void CustomLcdDrawer::drawOther(MenuItem* item) {
-    if (item->getTypeId() == 'd') {
+    const char type = item->getTypeId();
+
+    if (type == 'd') {
         TimeSelector* t = (TimeSelector*)item;
 
         // Draw title
@@ -94,5 +144,32 @@ void CustomLcdDrawer::drawOther(MenuItem* item) {
         // Guess the x pos to center the value number
         drawCenterNumber(t->getValue().hour, TEXT_Y, RECT1_X, RECT1_X + RECT_W);
         drawCenterNumber(t->getValue().minute, TEXT_Y, RECT2_X, RECT2_X + RECT_W);
+    } else if (type == 'p') {
+        PasswordInput* p = (PasswordInput*)item;
+
+        // Draw title
+        drawCenterText(p, 0);
+
+        lcd.setCursor(20, TEXT_Y);
+
+        const char* pass = p->getValue();
+        uint8_t i = 0, w;
+
+        while(*pass != 0) {
+            if (i == p->getActiveChar()) {
+                w = lcd.getCharWidth(*pass);
+
+                lcd.drawHLine(lcd.getCursorX(), TEXT_Y - 2, w, BLACK);
+                lcd.drawHLine(lcd.getCursorX(), TEXT_Y + 9, w, BLACK);
+            }
+
+            if (*pass == 0x7f)
+                lcd.print("<done>");
+            else
+                lcd.print(*pass);
+
+            pass++;
+            i++;
+        }
     }
 } 

@@ -60,6 +60,36 @@ class TimeSelector : public MenuItem {
         TimeSelectedCallback callback;
 };
 
+class PasswordInput : public MenuItem {
+    public:
+        typedef void(*TextConfirmedCallback)(const char*);
+
+        PasswordInput(MenuItem* parent, const FlashString* text, TextConfirmedCallback callback = NULL) : MenuItem(parent, text), callback(callback) {};
+
+        char* getValue() { return buffer; }
+        char getTypeId() { return 'p'; }
+
+        uint8_t getActiveChar() { return sel_i; }
+
+        const char* getSecondaryText() { return NULL; }
+
+        bool activate();
+        void deactivate() {}
+        bool back();
+
+        void doNext();
+
+        void doPrev();
+
+        MenuItem* action();
+
+    private:
+        char buffer[21];
+        uint8_t sel_i;
+
+        TextConfirmedCallback callback;
+};
+
 // Leave this line commented to use library's defaults
 #undef RECT_W
 #undef RECT_Y

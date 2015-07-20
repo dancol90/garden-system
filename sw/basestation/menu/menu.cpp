@@ -9,12 +9,17 @@
 #include "menu.h"
 #include "menu_custom.h"
 
+#ifdef ARDUINO_ARCH_ESP8266
 // Temp location
 #include <ESP8266WiFi.h>
+
+MenuItem* password_input;
+#endif
 
 Menu* root = new Menu(NULL, NULL);
 Menu* timer_edit;
 MenuItem* add_entry;
+
 
 MenuController menu;
 
@@ -99,6 +104,7 @@ void force_recv_off() { force_recv(false); }
 
 // ############################################################################################
 
+#ifdef USE_PCD8544
 // Update both contrast & backlight when one of them changes
 void lcd_cb(bool confirm) {
     state.lcd_settings_dirty = true;
@@ -106,6 +112,7 @@ void lcd_cb(bool confirm) {
     if (confirm) 
         save_settings();
 }
+#endif
 
 void time_cb(bool enter) {
     if (enter) {
@@ -129,10 +136,13 @@ void factory_wipe() {
 }
 
 // ############################################################################################
+#ifdef ARDUINO_ARCH_ESP8266
 
 void wifi_selected(int i) {
     Serial.print("Selected Wifi ");
     Serial.println(i);
+
+    menu.takeControl(password_input);
 }
 
 void wifi_enter(Menu* m) {
@@ -147,6 +157,12 @@ void wifi_enter(Menu* m) {
     }
 }
 
+void wifi_confirmed(const char* passphrase) {
+    Serial.print("Password: ");
+    Serial.println(passphrase);
+}
+
+#endif
 // ############################################################################################
 
 void init_menu() {
@@ -177,15 +193,18 @@ void init_menu() {
 
     sub = new Menu(root, F("Impostazioni"));
 
-#if USE_PCD8544
+#ifdef USE_PCD8544
         sub->addItem(new NumericSelector(sub, F("Retroilluminazione"), settings.backlight, 1, 20, lcd_cb));
         sub->addItem(new NumericSelector(sub, F("Contrasto"),          settings.contrast,  1, 20, lcd_cb));
 #endif
         sub->addItem(new    TimeSelector(sub, F("Ora"),                now.time, time_cb));
         sub->addItem(new          Action(sub, F("Ripristina memoria"), factory_wipe));    
 
+#ifdef ARDUINO_ARCH_ESP8266
         sub->addItem(new Menu(sub, F("WiFi"), wifi_enter));
 
+        password_input = new PasswordInput(sub, F("Passphrase"), wifi_confirmed);
+#endif
         root->addItem(sub);
 
     menu = MenuController(root, &dr);
