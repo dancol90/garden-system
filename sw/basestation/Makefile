@@ -7,7 +7,7 @@ UPLOAD_SPEED = 921600
 UPLOAD_PORT  = /dev/cu.SLAB_USBtoUART
 
 ARDUINO_PACKAGE_DIR = /Users/daniele/Library/Arduino15/packages/esp8266
-ARDUINO_CORE_DIR    = $(ARDUINO_PACKAGE_DIR)/hardware/esp8266/1.6.4-835-g77d77e8
+ARDUINO_CORE_DIR    = $(ARDUINO_PACKAGE_DIR)/hardware/esp8266/1.6.5-804-g2d340c7
 
 #############################################
 # Core paths and advanced configuration
@@ -113,7 +113,7 @@ DEFINES  = -DF_CPU=$(F_CPU) \
 CFLAGS   = -c -Os -Wpointer-arith -Wno-implicit-function-declaration -Wl,-EL -fno-inline-functions -nostdlib -mlongcalls -mtext-section-literals -falign-functions=4 -MMD -std=c99
 SFLAGS   = -c -g -x assembler-with-cpp -MMD
 CPPFLAGS = -c -Os -mlongcalls -mtext-section-literals -fno-exceptions -fno-rtti -falign-functions=4 -std=c++11 -MMD
-LNFLAGS  = -nostdlib -Wl,--no-check-sections -u call_user_start -Wl,-static "-L$(SDK_PATH)/lib" "-L$(SDK_PATH)/ld" "-T$(LD_SCRIPT)"
+LNFLAGS  = -g -Os -nostdlib -Wl,--no-check-sections -u call_user_start -Wl,-static "-L$(SDK_PATH)/lib" "-L$(SDK_PATH)/ld" "-T$(LD_SCRIPT)" -Wl,-wrap,system_restart_local -Wl,-wrap,register_chipv6_phy
 
 LIBS     = -lm -lgcc -lhal -lphy -lnet80211 -llwip -lwpa -lmain -lpp -lsmartconfig
 
