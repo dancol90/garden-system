@@ -17,6 +17,8 @@
 //#define USE_DS3231_RTC
 #define USE_SW_RTC
 
+#define USE_WIFI
+
 const int TIMEZONE = +2;
 
 const uint8_t RF24_CE  = 15;

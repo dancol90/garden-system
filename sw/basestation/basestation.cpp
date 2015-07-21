@@ -33,10 +33,12 @@ void setup() {
 
     init_menu();
 
-    state.force_schedule_update = true;
+    wifi_init();
 
-    Serial.println(sizeof(Interval));
+    state.force_schedule_update = true;
 }
+
+long start_t;
 
 void loop() {
 

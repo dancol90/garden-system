@@ -9,17 +9,9 @@
 #include "menu.h"
 #include "menu_custom.h"
 
-#ifdef ARDUINO_ARCH_ESP8266
-// Temp location
-#include <ESP8266WiFi.h>
-
-MenuItem* password_input;
-#endif
-
 Menu* root = new Menu(NULL, NULL);
 Menu* timer_edit;
 MenuItem* add_entry;
-
 
 MenuController menu;
 
@@ -136,34 +128,6 @@ void factory_wipe() {
 }
 
 // ############################################################################################
-#ifdef ARDUINO_ARCH_ESP8266
-
-void wifi_selected(int i) {
-    Serial.print("Selected Wifi ");
-    Serial.println(i);
-
-    menu.takeControl(password_input);
-}
-
-void wifi_enter(Menu* m) {
-    show_message(F("Ricerca..."));
-
-    m->clearItems();
-
-    int n = WiFi.scanNetworks();
-
-    for (int i = 0; i < n; i++) {
-        m->addItem(new ParamAction<int>(m, WiFi.SSID(i), wifi_selected, i));
-    }
-}
-
-void wifi_confirmed(const char* passphrase) {
-    Serial.print("Password: ");
-    Serial.println(passphrase);
-}
-
-#endif
-// ############################################################################################
 
 void init_menu() {
 
@@ -200,10 +164,8 @@ void init_menu() {
         sub->addItem(new    TimeSelector(sub, F("Ora"),                now.time, time_cb));
         sub->addItem(new          Action(sub, F("Ripristina memoria"), factory_wipe));    
 
-#ifdef ARDUINO_ARCH_ESP8266
-        sub->addItem(new Menu(sub, F("WiFi"), wifi_enter));
-
-        password_input = new PasswordInput(sub, F("Passphrase"), wifi_confirmed);
+#ifdef USE_WIFI
+        wifi_menu_init(sub);
 #endif
         root->addItem(sub);
 

@@ -79,7 +79,7 @@ MenuItem* TimeSelector::action() {
 bool PasswordInput::activate() {
     memset(buffer, 0, 21);
     sel_i = 0;
-    buffer[0] = 'a';
+    buffer[0] = ' ' + 95;
     return true;
 }
 

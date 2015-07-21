@@ -20,6 +20,10 @@
 #include "homescreen.h"
 #include "receivers.h"
 
+#ifdef USE_WIFI
+#include "wifi/wifi.h"
+#endif
+
 #include "settings.h"
 
 #define selected_receiver receivers[state.selected_recv]

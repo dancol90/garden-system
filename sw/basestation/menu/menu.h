@@ -18,6 +18,10 @@
 #include "../rf/rf.h"
 #include "../storage/storage.h"
 
+#ifdef USE_WIFI
+#include "../wifi/menu.h"
+#endif
+
 #include "../receivers.h"
 #include "../settings.h"
 
