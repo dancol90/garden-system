@@ -13,12 +13,12 @@
 
 LightLCD& lcd = *new LightSSD1306();
 
-void init_display() { 
+void display_init() { 
 	Wire.begin();
     lcd.begin();
 }
 
-void update_display() {}
-void start_backlight_timer() {}
+void display_update() {}
+void display_start_backlight_timer() {}
 
 #endif

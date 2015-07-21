@@ -18,18 +18,20 @@
 #elif defined USE_PCD8544
 	#include <LightPCD8544.h>
 #endif
+void display_init();
+void display_update();
 
 void init_display();
 void update_display();
-
-void start_backlight_timer();
+void display_start_backlight_timer();
 
 // Common methods, non driver-dependant
 #include "digit_font.h"
 
-void draw_big_digit(uint8_t xPos, uint8_t yPos, uint8_t digit);
+void display_draw_big_digit(uint8_t xPos, uint8_t yPos, uint8_t digit);
+void display_show_message(const __FlashStringHelper* msg);
 
-void show_message(const __FlashStringHelper* msg);
+void display_draw_selector(int x, int y);
 
 extern LightLCD& lcd;
 

@@ -15,7 +15,7 @@ ReceiverState receivers[RECEIVER_COUNT];
 
     TODO: add support for rollover. Now a job cannot cross the midnight.
 */
-void update_schedule() {
+void schedule_update() {
     int8_t min_index, next_index;
     long   min_value, next_value;
     Interval job;
@@ -32,7 +32,7 @@ void update_schedule() {
         next_value = 0xFFFF;
 
         for(byte i = 0; i < jobs_count; i++) {
-            job = get_recv_job(r, i);
+            job = storage_get_job_i(r, i);
 
             // The lowest one but after the current time
             if (job.enabled) {
@@ -43,18 +43,18 @@ void update_schedule() {
                 }
 
                 // If this job is later today, it's what we are searching for.
-                if (job.start < next_value && job.start >= now.time) {
+                if (job.start < next_value && job.start >= rtc_now.time) {
                     next_value = job.start.stamp();
                     next_index = i;
                 }
                 
-                bool condition = job.start <= now.time && now.time < job.end;
+                bool condition = job.start <= rtc_now.time && rtc_now.time < job.end;
 
                 if (receivers[r].active != condition) {
                     // Change the state only if is not forced by the user
                     if (!receivers[r].forced) {
                         receivers[r].active = condition;
-                        write_tx_fifo();
+                        rf_write_tx_fifo();
                     }
                 } else {
                     // Keep the forced state until it matches the scheduled one.

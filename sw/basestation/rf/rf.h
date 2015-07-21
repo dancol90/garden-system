@@ -18,7 +18,7 @@
 #include <SPI.h>
 #include <RF24.h>
 
-struct Packet {
+struct RFPacket {
     uint8_t command;
     uint8_t id;
     uint8_t state;
@@ -32,11 +32,11 @@ class MyRF24 : public RF24 {
           uint8_t flush_tx(void) { RF24::flush_tx(); };
 };
 
-const uint8_t RF24_PAYLOAD = sizeof(Packet);
+const uint8_t RF24_PAYLOAD = sizeof(RFPacket);
 
-void init_rf();
-void update_rf();
-void write_tx_fifo();
+void rf_init();
+void rf_update();
+void rf_write_tx_fifo();
 
 extern MyRF24 radio;
 

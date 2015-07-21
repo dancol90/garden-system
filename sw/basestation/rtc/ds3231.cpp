@@ -11,13 +11,13 @@
 
 #ifdef USE_DS3231_RTC
 
-static uint8_t bcd2bin (uint8_t val) { return val - 6 * (val >> 4); }
-static uint8_t bin2bcd (uint8_t val) { return val + 6 * (val / 10); }
+static uint8_t _bcd2bin (uint8_t val) { return val - 6 * (val >> 4); }
+static uint8_t _bin2bcd (uint8_t val) { return val + 6 * (val / 10); }
 
-DateTime now;
-uint8_t last_minute = 0;
+DateTime rtc_now;
+uint8_t _last_minute = 0;
 
-void update_rtc() {
+void rtc_update() {
     if (state.rtc_stop) return;
 
     Wire.beginTransmission(0x68);
@@ -26,15 +26,15 @@ void update_rtc() {
 
     Wire.requestFrom(0x68, 3);
 
-    now.time.second = bcd2bin(Wire.read());
-    now.time.minute = bcd2bin(Wire.read());
-    now.time.hour   = bcd2bin(Wire.read());
+    rtc_now.time.second = _bcd2bin(Wire.read());
+    rtc_now.time.minute = _bcd2bin(Wire.read());
+    rtc_now.time.hour   = _bcd2bin(Wire.read());
 
-    state.new_minute = (last_minute != now.s.minute);
-    last_minute = now.s.minute;
+    state.new_minute = (_last_minute != rtc_now.s.minute);
+    _last_minute = rtc_now.s.minute;
 }
 
-void write_time(DateTime t) {
+void rtc_write_time(DateTime t) {
     Wire.beginTransmission(0x68);
     // First register, seconds
     Wire.write(0x00);
@@ -42,13 +42,13 @@ void write_time(DateTime t) {
     // Reset seconds
     Wire.write(0);
     // Write mins and hours
-    Wire.write(bin2bcd(t.time.minute));
-    Wire.write(bin2bcd(t.time.hour));
+    Wire.write(_bin2bcd(t.time.minute));
+    Wire.write(_bin2bcd(t.time.hour));
 
     Wire.endTransmission();
 }
 
-void init_rtc() {
+void rtc_init() {
     Wire.beginTransmission(0x68);
 
     // Enable crystal.

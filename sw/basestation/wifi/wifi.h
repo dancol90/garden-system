@@ -10,7 +10,6 @@
 #define __wifi_h
 
 #include <Arduino.h>
-#include <Ticker.h>
 #include <ESP8266WiFi.h>
 
 #include "../config/config.h"

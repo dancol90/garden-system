@@ -9,5 +9,5 @@
 #include "rtc.h"
 #include "strings.h"
 
-const char*   get_dow_string(DateTime t) { return days[t.date.dow]; }
-const char* get_month_string(DateTime t) { return months[t.date.month - 1]; }
+const char*   rtc_get_dow_string(DateTime t) { return rtc_str_days[t.date.dow]; }
+const char* rtc_get_month_string(DateTime t) { return rtc_str_months[t.date.month - 1]; }

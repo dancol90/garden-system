@@ -55,15 +55,15 @@ struct Interval {
     bool enabled : 1;
 };
 
-extern DateTime now;
+extern DateTime rtc_now;
 
-void init_rtc();
-void update_rtc();
+void rtc_init();
+void rtc_update();
 
-void write_time(DateTime t);
-void write_time_from_timestamp(long timestamp);
+void rtc_write_time(DateTime t);
+void rtc_write_time_from_timestamp(long timestamp);
 
-const char*   get_dow_string(DateTime t);
-const char* get_month_string(DateTime t);
+const char*   rtc_get_dow_string(DateTime t);
+const char* rtc_get_month_string(DateTime t);
 
 #endif

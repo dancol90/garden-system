@@ -21,7 +21,7 @@ Interval job_copy; uint8_t job_ind;
 
 void job_selected(uint8_t index) {
     // Save a copy to work with
-    job_copy = get_job(index);
+    job_copy = storage_get_job(index);
     // Save the ref for future save
     job_ind = index;
 
@@ -30,13 +30,13 @@ void job_selected(uint8_t index) {
 
 void job_update() {
     // Write to EEPROM
-    save_job(job_ind, job_copy);
+    storage_save_job(job_ind, job_copy);
 
     // Update "Add job" menu entry to reflect available space
     bool avail = false;
 
     for (byte i = 0; i < jobs_count; i++) {
-        if (!get_job(i).enabled) {
+        if (!storage_get_job(i).enabled) {
             avail = true;
             break;
         }
@@ -51,7 +51,7 @@ void job_add() {
     // For each job of the current receiver
     for(byte i = 0; i < jobs_count; i++) {
         // If it's not enabled
-        if (!get_job(i).enabled) {
+        if (!storage_get_job(i).enabled) {
             // Select it
             job_selected(i);
 
@@ -89,7 +89,7 @@ void force_recv(uint8_t s) {
 
     state.menu_active = false;
 
-    write_tx_fifo();
+    rf_write_tx_fifo();
 }
 void force_recv_on()  { force_recv(true);  }
 void force_recv_off() { force_recv(false); }
@@ -102,7 +102,7 @@ void lcd_cb(bool confirm) {
     state.lcd_settings_dirty = true;
 
     if (confirm) 
-        save_settings();
+        storage_save_settings();
 }
 #endif
 
@@ -113,14 +113,14 @@ void time_cb(bool enter) {
         state.rtc_stop = true;
     } else {
         // Set RTC time here.
-        write_time(now);
+        rtc_write_time(rtc_now);
         
         state.rtc_stop = false;
     }
 }
 
 void factory_wipe() {
-    format_eeprom();
+    storage_format();
 
     // TODO: restore other settings
 
@@ -129,7 +129,7 @@ void factory_wipe() {
 
 // ############################################################################################
 
-void init_menu() {
+void menu_init() {
 
     Menu* sub;
 
@@ -161,7 +161,7 @@ void init_menu() {
         sub->addItem(new NumericSelector(sub, F("Retroilluminazione"), settings.backlight, 1, 20, lcd_cb));
         sub->addItem(new NumericSelector(sub, F("Contrasto"),          settings.contrast,  1, 20, lcd_cb));
 #endif
-        sub->addItem(new    TimeSelector(sub, F("Ora"),                now.time, time_cb));
+        sub->addItem(new    TimeSelector(sub, F("Ora"),                rtc_now.time, time_cb));
         sub->addItem(new          Action(sub, F("Ripristina memoria"), factory_wipe));    
 
 #ifdef USE_WIFI
@@ -172,16 +172,16 @@ void init_menu() {
     menu = MenuController(root, &dr);
 }
 
-void update_menu() {
+void menu_update() {
     bool changed = true;
 
-    if (is_pressed(BTN_UP))
+    if (input_is_pressed(BTN_UP))
         menu.prev();
-    else if (is_pressed(BTN_DOWN))
+    else if (input_is_pressed(BTN_DOWN))
         menu.next();
-    else if (is_pressed(BTN_OK))
+    else if (input_is_pressed(BTN_OK))
         menu.select();
-    else if (is_pressed(BTN_BACK)) {
+    else if (input_is_pressed(BTN_BACK)) {
         menu.back();
         if (menu.canExit()) state.menu_active = false;
     } else
@@ -191,7 +191,7 @@ void update_menu() {
         menu.draw();
 }
 
-void enter_menu() {
+void menu_enter() {
     state.menu_active = true;
     menu.takeControl(root);
 

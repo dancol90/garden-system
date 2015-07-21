@@ -14,12 +14,12 @@ int last_status;
 long repeat_timer;
 bool changed;
 
-void init_buttons() {
+void input_init() {
 	Wire.begin();
     touch.begin();
 }
 
-bool update_buttons() {
+bool input_update() {
     int new_status = touch.update();
 
     changed = new_status != last_status;
@@ -32,5 +32,5 @@ bool update_buttons() {
     }
 }
 
-bool is_pressed(uint8_t i) { return touch.touched(i) && changed; }
-bool   released(uint8_t i) { return true; }
+bool input_is_pressed(uint8_t i) { return touch.touched(i) && changed; }
+bool input_released  (uint8_t i) { return true; }

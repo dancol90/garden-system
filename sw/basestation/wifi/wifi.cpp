@@ -5,6 +5,9 @@
  Author: Daniele Colanardi
  License: BSD, see LICENSE file
 ############################################################################################*/
+
+#include <Ticker.h>
+
 #include "wifi.h"
 #include "menu.h"
 
@@ -14,8 +17,8 @@
 
 // Endless timer to update signal strenght
 Ticker _rssi_update;
-bool _startup_done;
-byte _signal_quality;
+bool   _startup_done;
+byte   _signal_quality;
 
 // Update the signal strength
 void _wifi_update_rssi() {
@@ -47,7 +50,7 @@ void wifi_update() {
         // NTP time set
         long ts = ntp_get_timestamp();
 
-        write_time_from_timestamp(ts);
+        rtc_write_time_from_timestamp(ts);
 
         // Job's done, do not repeat again.
         _startup_done = true;
@@ -59,23 +62,25 @@ byte wifi_get_quality() {
 }
 
 // ############################################################################################
-uint8_t wifi_index;
-MenuItem* password_input;
+// Menu handling section
+
+uint8_t   _wifi_index;
+MenuItem* _password_input;
 
 void wifi_menu_init(Menu* parent) {
 	Menu* wifi_menu = new Menu(parent, F("WiFi"), wifi_enter);
     parent->addItem(wifi_menu);
-	password_input = new PasswordInput(parent, F("Passphrase"), wifi_confirmed);
+	_password_input = new PasswordInput(parent, F("Passphrase"), wifi_confirmed);
 }
 
 void wifi_selected(int i) {
-    wifi_index = i;
+    _wifi_index = i;
 
-    menu.takeControl(password_input);
+    menu.takeControl(_password_input);
 }
 
 void wifi_enter(Menu* m) {
-    show_message(F("Ricerca..."));
+    display_show_message(F("Ricerca..."));
 
     m->clearItems();
 
@@ -88,16 +93,16 @@ void wifi_enter(Menu* m) {
 
 void wifi_confirmed(const char* passphrase) {
     Serial.print("Connecting to ");
-    Serial.println(WiFi.SSID(wifi_index));
+    Serial.println(WiFi.SSID(_wifi_index));
     Serial.print("Password: ");
     Serial.println(passphrase);
 
     //WiFi.disconnect();
     WiFi.begin(
-        WiFi.SSID(wifi_index),
+        WiFi.SSID(_wifi_index),
         "phobicviolin310",
         0,
-        WiFi.BSSID(wifi_index)
+        WiFi.BSSID(_wifi_index)
     );
 }
 

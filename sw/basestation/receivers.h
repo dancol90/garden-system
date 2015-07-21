@@ -28,11 +28,11 @@ struct ReceiverState {
     int8_t    next_job : 4;
 };
 
-
+// TODO: make this private and use getReceiver(index)
 extern ReceiverState receivers[];
 
 #define selected_receiver receivers[state.selected_recv]
 
-void update_schedule();
+void schedule_update();
 
 #endif

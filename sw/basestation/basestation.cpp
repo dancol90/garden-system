@@ -16,22 +16,22 @@ Settings settings;
 void setup() {
     Serial.begin(115200);
 
-    init_eeprom();
+    storage_init();
 
-    load_settings();
+    storage_load_settings();
 
     // Clear data
     memset(&state,    0, sizeof(ApplicationState));
     memset(&receivers, 0, sizeof(ReceiverState) * RECEIVER_COUNT);
 
-    init_rtc();
+    rtc_init();
 
-    init_rf();
+    rf_init();
 
-    init_buttons();
-    init_display();
+    input_init();
+    display_init();
 
-    init_menu();
+    menu_init();
 
 #ifdef USE_WIFI
     wifi_init();
@@ -45,27 +45,27 @@ long start_t;
 void loop() {
 
     // Update time
-    update_rtc();
+    rtc_update();
 
     if (state.new_minute || state.force_schedule_update) {
-        update_schedule();
+        schedule_update();
     }
 
-    update_rf();
+    rf_update();
 
     // Update button states
-    if (update_buttons()) {
-        start_backlight_timer();
+    if (input_update()) {
+        display_start_backlight_timer();
     }
 
     if (state.menu_active) {
-        update_menu();
+        menu_update();
     } else {
         // Update homescreen state
-        update_homescreen();
+        home_update();
     }
 
-    update_display();
+    display_update();
 
 #ifdef USE_WIFI
     wifi_update();

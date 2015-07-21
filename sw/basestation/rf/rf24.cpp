@@ -8,7 +8,7 @@
 
 #include "rf.h"
 
-MyRF24 radio(RF24_CE, RF24_CSN);
+MyRF24 _radio(RF24_CE, RF24_CSN);
 
 /*
     ATTENTION!! This definition is just temporary.
@@ -20,49 +20,49 @@ MyRF24 radio(RF24_CE, RF24_CSN);
 */
 #define get_recv_id(i) (i + 1)
 
-void init_rf() {
-    radio.begin();
+void rf_init() {
+    _radio.begin();
 
     // Increase the delay between retries & # of retries
-    radio.setRetries(15,15);
+    _radio.setRetries(15,15);
 
     // Set payload size
-    radio.setPayloadSize(8);
+    _radio.setPayloadSize(8);
 
     // High trasmit power
-    radio.setPALevel(RF24_PA_HIGH);
+    _radio.setPALevel(RF24_PA_HIGH);
     // Low speed to increase signal range
-    radio.setDataRate(RF24_250KBPS);
+    _radio.setDataRate(RF24_250KBPS);
 
-    radio.enableAckPayload();
+    _radio.enableAckPayload();
 
     // Open a pipe
     for (byte i = 0; i < RECEIVER_COUNT; i++) {
-        radio.openReadingPipe(i, RF24_BASE_PIPE | get_recv_id(i));
+        _radio.openReadingPipe(i, RF24_BASE_PIPE | get_recv_id(i));
     }
 
-    radio.startListening();
+    _radio.startListening();
 
-    write_tx_fifo();
+    rf_write_tx_fifo();
 }
 
-void update_rf() {
+void rf_update() {
     uint8_t recv_index;
 
-    if (radio.available(&recv_index)) {
-        radio.flush_rx();
+    if (_radio.available(&recv_index)) {
+        _radio.flush_rx();
 
-        write_tx_fifo();
+        rf_write_tx_fifo();
 
         if (recv_index < RECEIVER_COUNT)
             receivers[recv_index].got_rf = true;
     }
 }
 
-void write_tx_fifo() {
-    Packet packet;
+void rf_write_tx_fifo() {
+    RFPacket packet;
 
-    radio.flush_tx();
+    _radio.flush_tx();
 
     for (byte i = 0; i < RECEIVER_COUNT; i++) {
         // Response packet
@@ -73,6 +73,6 @@ void write_tx_fifo() {
         // Send the state of the requesting receiver
         packet.state = receivers[i].active;
 
-        radio.writeAckPayload(i, &packet, sizeof(Packet));
+        _radio.writeAckPayload(i, &packet, sizeof(RFPacket));
     }
 }

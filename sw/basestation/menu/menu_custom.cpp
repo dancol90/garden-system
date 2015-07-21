@@ -11,14 +11,14 @@
 char job_name[14];
 
 const char* JobEntry::getText() {
-    get_job_string(this->data, job_name);
+    storage_get_job_str(this->data, job_name);
 
     return job_name;
 }
 
-bool JobEntry::isEnabled() { return get_job(this->data).enabled; }
+bool JobEntry::isEnabled() { return storage_get_job(this->data).enabled; }
 
-
+// ############################################################################################
 
 const char* TimeSelector::getSecondaryText() {
     // TODO: this give errors on PSTR...why?
@@ -74,7 +74,7 @@ MenuItem* TimeSelector::action() {
     }
 }
 
-/****************************************/
+// ############################################################################################
 
 bool PasswordInput::activate() {
     memset(buffer, 0, 21);
@@ -121,7 +121,7 @@ bool PasswordInput::back() {
     }
 }
 
-/****************************************/
+// ############################################################################################
 
 void CustomLcdDrawer::drawOther(MenuItem* item) {
     const char type = item->getTypeId();

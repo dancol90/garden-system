@@ -15,18 +15,18 @@
 #include "../config/config.h"
 #include "../rtc/rtc.h"
 
-Interval get_recv_job(byte recv, byte index);
-void get_recv_job_string(byte recv, byte index, char* buff);
-void save_recv_job(byte recv, byte index, Interval job);
+Interval storage_get_job_i(byte recv, byte index);
+void storage_get_job_str_i(byte recv, byte index, char* buff);
+void storage_save_job_i(byte recv, byte index, Interval job);
 
-Interval get_job(byte index);
-void get_job_string(byte index, char* buff);
-void save_job(byte index, Interval job);
+Interval storage_get_job(byte index);
+void storage_get_job_str(byte index, char* buff);
+void storage_save_job(byte index, Interval job);
 
-void save_settings();
-void load_settings();
+void storage_save_settings();
+void storage_load_settings();
 
-void format_eeprom();
-void init_eeprom();
+void storage_format();
+void storage_init();
 
 #endif

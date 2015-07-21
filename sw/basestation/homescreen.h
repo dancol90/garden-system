@@ -12,7 +12,6 @@
 #include <Arduino.h>
 #include "basestation.h"
  
-void draw_selector(int x, int y);
-void update_homescreen();
+void home_update();
 
 #endif

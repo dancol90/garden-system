@@ -17,7 +17,7 @@ const char ven[] = "Ven";
 const char sab[] = "Sab";
 const char dom[] = "Dom";
 
-const char* days[] = { dom, lun, mar, mer, gio, ven, sab };
+const char* rtc_str_days[] = { dom, lun, mar, mer, gio, ven, sab };
 
 const char mon1[]  = "Gennaio";
 const char mon2[]  = "Febbraio";
@@ -32,6 +32,6 @@ const char mon10[] = "Ottobre";
 const char mon11[] = "Novembre";
 const char mon12[] = "Dicembre";
 
-const char* months[] = { mon1, mon2, mon3, mon4, mon5, mon6, mon7, mon8, mon9, mon10, mon11, mon12 };
+const char* rtc_str_months[] = { mon1, mon2, mon3, mon4, mon5, mon6, mon7, mon8, mon9, mon10, mon11, mon12 };
 
 #endif

@@ -27,9 +27,9 @@
 
 extern char job_name[];
 
-void init_menu();
-void update_menu();
-void enter_menu();
+void menu_init();
+void menu_update();
+void menu_enter();
 
 extern MenuController menu;
 
