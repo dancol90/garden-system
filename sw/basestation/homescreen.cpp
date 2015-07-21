@@ -30,13 +30,29 @@ void draw_homescreen() {
     draw_big_digit(14 + 2*font_w, 1, now.time.minute / 10);   
     draw_big_digit(16 + 3*font_w, 1, now.time.minute % 10);
 
+#ifdef USE_SSD1306
     sprintf(job_name, "%s %d", get_dow_string(now), now.date.day);
 
-#ifdef USE_SSD1306
     lcd.setCursor(86, 4);
     lcd.print(job_name);
     lcd.setCursor(86, 14);
     lcd.print(get_month_string(now));
+#endif
+
+#ifdef USE_WIFI
+    // Draw WiFi signal bar
+    
+    byte signal = wifi_get_quality();
+
+    if (signal != 0xFF) {
+        for (uint8_t i = 0; i <= 3; i++) {
+            if (signal > 25*i)
+                lcd.drawVLine(120 + 2*i, 6 - 2*i , 2*i + 2, BLACK);
+            else
+                lcd.drawPixel(120 + 2*i, 8, BLACK);
+        }
+    }
+
 #endif
 
     lcd.setCursor(24, 32);
