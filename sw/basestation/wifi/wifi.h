@@ -15,10 +15,13 @@
 
 #include "../config/config.h"
 //#include "../settings.h"
+#include "../rtc/rtc.h"
 
 
 void wifi_init();
+void wifi_update();
 byte wifi_get_quality();
 
+unsigned long ntp_get_timestamp();
 
 #endif

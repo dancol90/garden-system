@@ -20,6 +20,7 @@
 #define USE_WIFI
 
 const int TIMEZONE = +2;
+static const char* NTP_SERVER_HOST = "ntp1.inrim.it";
 
 const uint8_t RF24_CE  = 15;
 const uint8_t RF24_CSN = 0;

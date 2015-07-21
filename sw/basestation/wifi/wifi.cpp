@@ -10,9 +10,14 @@
 
 #include "../menu/menu_custom.h"
 
+#ifdef USE_WIFI
+
+// Endless timer to update signal strenght
 Ticker _rssi_update;
+bool _startup_done;
 byte _signal_quality;
 
+// Update the signal strength
 void _wifi_update_rssi() {
     _signal_quality = 0xFF;
 
@@ -24,17 +29,29 @@ void _wifi_update_rssi() {
         int rssi = WiFi.RSSI() + 100;
         _signal_quality = rssi <= 0 ? 0 : (rssi <= 50 ? 2*rssi : 100);
     }
-
-    //WiFi.printDiag(Serial);
 }
+
 
 void wifi_init() {
     _wifi_update_rssi();
 
+    // Update signal strength every second
     _rssi_update.attach(1, _wifi_update_rssi);
 
-    // async wifi scan to let autoconnect find the right BSSID
-    //int n = WiFi.scanNetworks();
+    _startup_done = false;
+}
+
+// Check for connection and init some services
+void wifi_update() {
+    if(!_startup_done && WiFi.status() == WL_CONNECTED) {
+        // NTP time set
+        long ts = ntp_get_timestamp();
+
+        write_time_from_timestamp(ts);
+
+        // Job's done, do not repeat again.
+        _startup_done = true;
+    }
 }
 
 byte wifi_get_quality() {
@@ -83,3 +100,5 @@ void wifi_confirmed(const char* passphrase) {
         WiFi.BSSID(wifi_index)
     );
 }
+
+#endif

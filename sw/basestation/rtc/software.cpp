@@ -73,9 +73,8 @@ void write_time_from_timestamp(long timestamp) {
 }
 
 void init_rtc() {
-    long timestamp = 0;//getTimestamp();
-
-    write_time_from_timestamp(timestamp + TIMEZONE * 60 * 60);
+    // TODO: load some saved time
+    write_time_from_timestamp(0);
 
     last_millis = millis();
     buffer_millis = 0;

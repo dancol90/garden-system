@@ -33,7 +33,9 @@ void setup() {
 
     init_menu();
 
+#ifdef USE_WIFI
     wifi_init();
+#endif
 
     state.force_schedule_update = true;
 }
@@ -64,6 +66,10 @@ void loop() {
     }
 
     update_display();
+
+#ifdef USE_WIFI
+    wifi_update();
+#endif
 
     delay(50);
 }

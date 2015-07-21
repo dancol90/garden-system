@@ -61,6 +61,7 @@ void init_rtc();
 void update_rtc();
 
 void write_time(DateTime t);
+void write_time_from_timestamp(long timestamp);
 
 const char*   get_dow_string(DateTime t);
 const char* get_month_string(DateTime t);
