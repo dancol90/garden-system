@@ -8,11 +8,11 @@
 
 #include "rf.h"
 
-MyRF24 _radio(RF24_CE, RF24_CSN);
+RF24 _radio(RF24_CE, RF24_CSN);
 
 /*
     ATTENTION!! This definition is just temporary.
-    When everything will work, it will be moved to eeprom.ino 
+    When everything will work, it will be moved to eeprom.ino
     and it will load the saved ID from the memory.
     There will be also a menu in Settings to select the ID for each channel.
 
@@ -50,8 +50,6 @@ void rf_update() {
     uint8_t recv_index;
 
     if (_radio.available(&recv_index)) {
-        _radio.flush_rx();
-
         rf_write_tx_fifo();
 
         if (recv_index < RECEIVER_COUNT)

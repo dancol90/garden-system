@@ -13,7 +13,6 @@ extern "C" {
 #include <sntp.h>
 }
 
-const long GMT8 = 8UL * 60 * 60;
 const long JAN_1_2010 = 1262304000UL;
 
 unsigned long ntp_get_timestamp() {
@@ -31,7 +30,7 @@ unsigned long ntp_get_timestamp() {
     long current_stamp = sntp_get_current_timestamp();
 
     // Compensate for the wrong timezone and change reference year to 2010
-    return current_stamp /*- GMT8*/ - JAN_1_2010;
+    return current_stamp - JAN_1_2010;
 }
 
 #endif
