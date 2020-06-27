@@ -17,6 +17,9 @@
 //#define USE_DS3231_RTC
 #define USE_SW_RTC
 
+//#define USE_INPUT_MPR121
+#define USE_INPUT_GPIO
+
 #define USE_WIFI
 
 const int TIMEZONE = +2;
@@ -35,6 +38,12 @@ enum Button {
 	BTN_OK,
 	BTN_BACK
 };
+
+#ifdef USE_INPUT_GPIO
+const uint8_t button_pins[] = { 12, 13, 14, 15 };
+const int     button_timer_interval = 15;
+const int     button_rebounce_interval = 200;
+#endif
 
 const uint8_t jobs_count = 10;
 const uint16_t eeprom_settings_start = 0x01;

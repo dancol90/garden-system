@@ -10,13 +10,13 @@
 #define __input_h
 
 #include <Arduino.h>
-#include <LightMPR121.h>
+#include "../config/config.h"
 
 void input_init();
 bool input_update();
 
 bool input_is_pressed(uint8_t i);
-bool   input_released(uint8_t i);
+bool input_released(uint8_t i);
 
 struct ButtonState {
     uint8_t changed :1;
@@ -26,7 +26,5 @@ struct ButtonState {
     uint8_t read    :1;
     long timer;
 };
-
-extern LightMPR121 touch;
 
 #endif

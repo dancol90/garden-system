@@ -6,8 +6,12 @@
  License: BSD, see LICENSE file
 ############################################################################################*/
 
-#include <Wire.h>
 #include "input.h"
+
+#ifdef USE_INPUT_MPR121
+
+#include <Wire.h>
+#include <LightMPR121.h>
 
 LightMPR121 touch;
 int last_status;
@@ -34,3 +38,5 @@ bool input_update() {
 
 bool input_is_pressed(uint8_t i) { return touch.touched(i) && changed; }
 bool input_released  (uint8_t i) { return true; }
+
+#endif
