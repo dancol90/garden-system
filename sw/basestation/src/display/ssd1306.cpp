@@ -14,7 +14,7 @@
 LightLCD& lcd = *new LightSSD1306();
 
 void display_init() { 
-	Wire.begin();
+    Wire.begin(SSD1306_SDA_PIN, SSD1306_SCL_PIN);
     lcd.begin();
 }
 
