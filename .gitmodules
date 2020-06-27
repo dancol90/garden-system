@@ -1,0 +1,6 @@
+[submodule "sw/basestation/lib/LightLCD"]
+	path = sw/basestation/lib/LightLCD
+	url = https://github.com/dancol90/LightLCD.git
+[submodule "sw/basestation/lib/MenuLib"]
+	path = sw/basestation/lib/MenuLib
+	url = https://github.com/dancol90/MenuLib.git
