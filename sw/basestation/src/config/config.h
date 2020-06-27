@@ -51,7 +51,7 @@ enum Button {
 };
 
 #ifdef USE_INPUT_GPIO
-const uint8_t button_pins[] = { 12, 13, 14, 15 };
+const uint8_t button_pins[] = { D6, D7, D5, D3 };
 const int     button_timer_interval = 15;
 const int     button_rebounce_interval = 200;
 #endif
