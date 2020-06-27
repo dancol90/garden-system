@@ -8,7 +8,7 @@
 
 #include "homescreen.h"
 
-uint8_t _rect_w = lcd.width() / RECEIVER_COUNT;
+uint8_t _rect_w;
 
 long _update_timer = 0;
 
@@ -92,6 +92,10 @@ void draw_homescreen() {
     display_draw_selector(_rect_w / 2 + _rect_w * state.selected_recv - 3, offset_y - 4);
 
     lcd.update();
+}
+
+void home_init() {
+    _rect_w = lcd.width() / RECEIVER_COUNT;
 }
 
 void home_update() {

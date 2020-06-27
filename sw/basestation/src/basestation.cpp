@@ -37,6 +37,8 @@ void setup() {
     wifi_init();
 #endif
 
+    home_init();
+
     state.force_schedule_update = true;
 }
 

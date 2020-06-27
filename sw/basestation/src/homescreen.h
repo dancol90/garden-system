@@ -11,7 +11,8 @@
 
 #include <Arduino.h>
 #include "basestation.h"
- 
+
+void home_init(); 
 void home_update();
 
 #endif
