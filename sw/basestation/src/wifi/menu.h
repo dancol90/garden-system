@@ -11,8 +11,6 @@
 
 #include <MenuLib.h>
 
-extern MenuController menu;
-
 void wifi_menu_init(Menu* parent);
 
 void wifi_selected(int i);

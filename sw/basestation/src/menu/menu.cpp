@@ -15,8 +15,6 @@ MenuItem* add_entry;
 
 MenuController menu;
 
-CustomLcdDrawer dr = CustomLcdDrawer(lcd);
-
 Interval job_copy; uint8_t job_ind;
 
 void job_selected(uint8_t index) {
@@ -169,7 +167,8 @@ void menu_init() {
 #endif
         root->addItem(sub);
 
-    menu = MenuController(root, &dr);
+    CustomLcdDrawer * dr = new CustomLcdDrawer(lcd);
+    menu = MenuController(root, dr);
 }
 
 void menu_update() {

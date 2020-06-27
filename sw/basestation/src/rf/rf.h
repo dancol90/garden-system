@@ -38,6 +38,4 @@ void rf_init();
 void rf_update();
 void rf_write_tx_fifo();
 
-extern RF24 radio;
-
 #endif
